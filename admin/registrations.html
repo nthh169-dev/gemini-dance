@@ -34,7 +34,7 @@
     <div class="full"><label>Họ tên</label><input name="full_name" required></div>
     <div><label>SĐT</label><input name="phone" required></div>
     <div><label>Email</label><input name="email" type="email"></div>
-    <div><label>Năm sinh</label><select name="birth_year"></select></div>
+    <div><label>Năm sinh</label><input name="birth_year"></div>
     <div><label>Khoá học</label><select name="course_id"></select></div>
     <div><label>Trạng thái</label><select name="status"></select></div>
     <div class="full"><label>Ghi chú</label><textarea name="note"></textarea></div>
@@ -97,7 +97,7 @@
       const r = rows.find((x) => x.id == e.target.dataset.edit);
       form.dataset.id = r.id; document.getElementById("dlg-code").textContent = r.code;
       ["full_name", "phone", "email", "note", "course_id", "status"].forEach((k) => (form[k].value = r[k] ?? ""));
-      form.birth_year.innerHTML = yearOptions(r.birth_year);
+      attachYearPicker(form.birth_year); form.birth_year.value = r.birth_year || "";
       dlg.returnValue = ""; dlg.showModal();
     }
   });
@@ -109,6 +109,7 @@
     v.phone = normPhone(v.phone);
     if (!isPhone(v.phone)) { toast("Số điện thoại không hợp lệ.", "err"); return; }
     if (v.email && !isEmail(v.email)) { toast("Email không đúng định dạng.", "err"); return; }
+    if (v.birth_year !== null && (!(v.birth_year >= 1950) || v.birth_year > maxBirthYear())) { toast(`Năm sinh không hợp lệ (1950 – ${maxBirthYear()}).`, "err"); return; }
     const { error } = await sb.from("registrations").update({ ...v, course_id: Number(v.course_id), email: v.email || null, note: v.note || null, updated_at: new Date().toISOString() }).eq("id", form.dataset.id);
     if (error) toast(error.message, "err"); else { toast("Đã lưu"); load(); }
   });

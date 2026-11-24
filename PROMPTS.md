@@ -125,7 +125,15 @@
 
 ---
 
-## Prompt 12 – *(thêm tiếp ở đây)*
+## Prompt 12 – Ô năm sinh có nút mở bảng chọn năm (24/11/2026)
+**Prompt:**
+> Năm sinh hiện thế này là sai UI rồi. Bạn hãy sửa lại để kế bên ô năm sinh có nút cho chọn năm sinh. Nếu user bấm nút thì hiện popup cho user chọn năm sinh. Nếu ko bấm nút thì user có thể nhập trực tiếp vào ô *(kèm ảnh chụp danh sách năm dài trên Safari)*
+
+**Kết quả:** Thay danh sách thả xuống bằng ô nhập năm sinh (chỉ nhận 4 chữ số) + nút lịch bên cạnh. Bấm nút hiện popup bảng 12 năm (3 cột) theo màu thương hiệu, có nút ‹ › để chuyển trang năm, chỉ hiện năm đủ 18 tuổi; chọn năm thì điền vào ô và đóng popup (bấm ra ngoài hoặc Esc cũng đóng). Gõ năm dưới 18 tuổi hoặc sai định dạng thì báo lỗi ngay. Áp dụng cho form đăng ký, form sửa đăng ký và trang admin. Đã thử bằng trình duyệt tự động ở khổ máy tính và điện thoại.
+
+---
+
+## Prompt 13 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

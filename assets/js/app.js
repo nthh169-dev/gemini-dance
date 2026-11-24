@@ -33,18 +33,79 @@
     for (let y = maxBirthYear(); y >= 1950; y--) h += `<option value="${y}" ${String(y) === String(sel) ? "selected" : ""}>${y}</option>`;
     return h;
   };
+  // Ô năm sinh: gõ trực tiếp 4 số, hoặc bấm nút lịch để chọn trong bảng năm
+  const CAL_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>';
+  window.attachYearPicker = (input) => {
+    if (!input || input.dataset.picker) return;
+    input.dataset.picker = "1";
+    input.type = "text"; input.inputMode = "numeric"; input.maxLength = 4; input.autocomplete = "bday-year";
+    if (!input.placeholder) input.placeholder = "VD: 2000";
+    input.addEventListener("input", () => { input.value = input.value.replace(/\D/g, "").slice(0, 4); });
+    const wrap = document.createElement("div"); wrap.className = "year-field";
+    input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "year-btn"; btn.innerHTML = CAL_ICON;
+    btn.setAttribute("aria-label", "Chọn năm sinh"); btn.setAttribute("aria-haspopup", "dialog"); btn.setAttribute("aria-expanded", "false");
+    wrap.appendChild(btn);
+    const pop = document.createElement("div"); pop.className = "year-pop"; pop.hidden = true;
+    pop.setAttribute("role", "dialog"); pop.setAttribute("aria-label", "Chọn năm sinh");
+    wrap.appendChild(pop);
+    const PAGE = 12, MIN = 1950;
+    let end = maxBirthYear();
+    const render = () => {
+      const max = maxBirthYear(), start = Math.max(MIN, end - PAGE + 1), cur = input.value;
+      let cells = "";
+      for (let y = start; y <= end; y++) cells += `<button type="button" class="year-cell ${String(y) === cur ? "active" : ""}" data-year="${y}">${y}</button>`;
+      pop.innerHTML = `
+        <div class="year-head">
+          <button type="button" class="year-nav" data-nav="-1" aria-label="Các năm trước" ${start <= MIN ? "disabled" : ""}>‹</button>
+          <b>${start} – ${end}</b>
+          <button type="button" class="year-nav" data-nav="1" aria-label="Các năm sau" ${end >= max ? "disabled" : ""}>›</button>
+        </div>
+        <div class="year-grid">${cells}</div>
+        <p class="year-note">Chỉ nhận học viên sinh năm ${max} trở về trước</p>`;
+    };
+    const open = () => {
+      const max = maxBirthYear(), v = +input.value;
+      end = v >= MIN && v <= max ? Math.min(max, v + Math.floor(PAGE / 2)) : max;
+      end = Math.max(end, Math.min(max, MIN + PAGE - 1));
+      render(); pop.hidden = false; btn.setAttribute("aria-expanded", "true");
+      (pop.querySelector(".year-cell.active") || pop.querySelector(".year-cell")).focus();
+    };
+    const close = (focusBtn) => { pop.hidden = true; btn.setAttribute("aria-expanded", "false"); if (focusBtn) btn.focus(); };
+    btn.addEventListener("click", () => (pop.hidden ? open() : close()));
+    pop.addEventListener("click", (e) => {
+      const nav = e.target.closest("[data-nav]"), cell = e.target.closest("[data-year]");
+      if (nav) { end = Math.min(maxBirthYear(), Math.max(MIN + PAGE - 1, end + Number(nav.dataset.nav) * PAGE)); render(); }
+      if (cell) {
+        input.value = cell.dataset.year; close();
+        input.dispatchEvent(new Event("input", { bubbles: true })); input.dispatchEvent(new Event("change", { bubbles: true }));
+        input.focus();
+      }
+    });
+    pop.addEventListener("keydown", (e) => { if (e.key === "Escape") close(true); });
+    document.addEventListener("click", (e) => { if (!pop.hidden && !e.composedPath().includes(wrap)) close(); });
+  };
+
   // Gắn kiểm tra SĐT / email cho một form: báo lỗi ngay dưới ô khi rời ô và khi bấm gửi
   window.attachContactValidation = (form) => {
     const rules = [
       ["phone", (v) => isPhone(v) ? "" : "Số điện thoại cần 10 số, bắt đầu bằng 03, 05, 07, 08 hoặc 09 (VD: 0909 123 456)."],
       ["email", (v) => !v.trim() || isEmail(v) ? "" : "Email không đúng định dạng (VD: ten@gmail.com)."],
-      ["birth_year", (v) => v ? "" : `Vui lòng chọn năm sinh. Gemini Dance nhận học viên từ ${MIN_AGE} tuổi (sinh năm ${maxBirthYear()} trở về trước).`]
+      ["birth_year", (v) => {
+        v = String(v || "").trim();
+        if (!v) return "Vui lòng nhập hoặc chọn năm sinh.";
+        if (!/^\d{4}$/.test(v) || +v < 1950) return "Năm sinh không hợp lệ (nhập 4 số, VD: 2000).";
+        if (+v > maxBirthYear()) return `Gemini Dance chỉ nhận học viên từ ${MIN_AGE} tuổi (sinh năm ${maxBirthYear()} trở về trước).`;
+        return "";
+      }]
     ];
     const check = (el, fn) => {
       const msg = fn(el.value);
       el.setCustomValidity(msg);
-      let hint = el.parentElement.querySelector(".field-error");
-      if (!hint) { hint = document.createElement("small"); hint.className = "field-error"; el.parentElement.appendChild(hint); }
+      const box = el.closest(".year-field") ? el.closest(".year-field").parentElement : el.parentElement;
+      let hint = box.querySelector(".field-error");
+      if (!hint) { hint = document.createElement("small"); hint.className = "field-error"; box.appendChild(hint); }
       hint.textContent = msg;
       el.classList.toggle("invalid", !!msg);
       return !msg;

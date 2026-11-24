@@ -146,6 +146,22 @@ input[type="date"] { min-height: 48px; }
 .field-error { display: block; color: #ff8cc6; font-size: .82rem; margin-top: 6px; min-height: 0; }
 .field-error:empty { display: none; }
 input.invalid, select.invalid { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,67,154,.18); }
+/* Ô năm sinh + nút chọn năm */
+.year-field { position: relative; display: flex; gap: 8px; }
+.year-field input { flex: 1; min-width: 0; }
+.year-btn { flex: 0 0 48px; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--cyan); cursor: pointer; }
+.year-btn:hover, .year-btn[aria-expanded="true"] { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(62,230,223,.15); }
+.year-btn svg { width: 22px; height: 22px; }
+.year-pop { position: absolute; top: calc(100% + 8px); right: 0; z-index: 40; width: 280px; max-width: calc(100vw - 32px); padding: 14px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--violet); box-shadow: var(--shadow), 0 0 30px rgba(138,124,240,.25); }
+.year-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-family: var(--font-head); }
+.year-nav { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg-2); color: var(--text); font-size: 1.3rem; line-height: 1; cursor: pointer; }
+.year-nav:hover:not([disabled]) { border-color: var(--cyan); }
+.year-nav[disabled] { opacity: .35; cursor: default; }
+.year-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.year-cell { padding: 10px 0; border-radius: 10px; border: 1px solid transparent; background: var(--bg-2); color: var(--text); font: 500 .95rem var(--font-head); cursor: pointer; }
+.year-cell:hover { border-color: var(--pink); background: rgba(232,67,154,.15); }
+.year-cell.active { background: var(--grad); color: #fff; }
+.year-note { margin: 10px 0 0; font-size: .78rem; color: var(--muted); text-align: center; }
 .field-hint { display: block; color: var(--muted); font-size: .8rem; margin-top: 6px; }
 input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .85; filter: drop-shadow(0 0 4px rgba(62,230,223,.5)); }
 /* Ẩn icon danh bạ / mật khẩu tự động của Safari (icon hình người trong ô nhập) */

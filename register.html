@@ -36,7 +36,7 @@
           <div class="full"><label for="r-name">Họ và tên *</label><input id="r-name" name="full_name" required minlength="2" maxlength="80" placeholder="Nguyễn Thị Hạnh" autocomplete="name"></div>
           <div><label for="r-phone">Số điện thoại *</label><input id="r-phone" name="phone" type="tel" inputmode="tel" required placeholder="0909 123 456" autocomplete="tel"></div>
           <div><label for="r-email">Email</label><input id="r-email" name="email" type="text" inputmode="email" placeholder="ban@gmail.com" autocomplete="email"></div>
-          <div><label for="r-year">Năm sinh *</label><select id="r-year" name="birth_year" required autocomplete="bday-year"></select><small class="field-hint" id="age-hint"></small></div>
+          <div><label for="r-year">Năm sinh *</label><input id="r-year" name="birth_year" required><small class="field-hint" id="age-hint"></small></div>
           <div><label for="r-course">Khoá học *</label><select id="r-course" name="course_id" required></select></div>
           <div class="full"><label for="r-note">Ghi chú</label><textarea id="r-note" name="note" placeholder="Bạn đã từng học nhảy chưa? Muốn học dòng nhảy nào?"></textarea></div>
           <div class="full"><button class="btn btn-primary" type="submit">Gửi đăng ký</button></div>
@@ -75,8 +75,8 @@
   }));
 
   const needDb = () => { if (!sb) { toast("Chưa kết nối được database.", "err"); return true; } return false; };
-  // Năm sinh: chọn từ danh sách, chỉ có các năm đủ 18 tuổi
-  document.getElementById("r-year").innerHTML = yearOptions();
+  // Năm sinh: gõ trực tiếp hoặc bấm nút để chọn trong bảng năm (chỉ nhận từ 18 tuổi)
+  attachYearPicker(document.getElementById("r-year"));
   document.getElementById("age-hint").textContent = `Chỉ nhận học viên từ ${MIN_AGE} tuổi (sinh năm ${maxBirthYear()} trở về trước).`;
   const validateNew = attachContactValidation(document.getElementById("reg-form"));
   // Gọi RPC với năm sinh; nếu database đang ở bản "ngày sinh" (migration-002) thì gửi ngày 01/01 của năm đó
@@ -132,7 +132,7 @@
         <form id="edit-form" class="form-grid" novalidate>
           <div class="full"><label>Họ và tên</label><input name="full_name" required value="${esc(data.full_name)}"></div>
           <div><label>Email</label><input name="email" type="text" inputmode="email" value="${esc(data.email || "")}"></div>
-          <div><label>Năm sinh *</label><select name="birth_year" required>${yearOptions(data.birth_year)}</select></div>
+          <div><label>Năm sinh *</label><input name="birth_year" required value="${data.birth_year || ""}"></div>
           <div class="full"><label>Khoá học</label><select name="course_id">${opts(data.course_id)}</select></div>
           <div class="full"><label>Ghi chú</label><textarea name="note">${esc(data.note || "")}</textarea></div>
           <div class="full" style="display:flex;gap:12px;flex-wrap:wrap">
@@ -143,6 +143,7 @@
       </div>`;
 
     // UPDATE
+    attachYearPicker(document.getElementById("edit-form").elements.birth_year);
     const validateEdit = attachContactValidation(document.getElementById("edit-form"));
     document.getElementById("edit-form").addEventListener("submit", async (ev) => {
       ev.preventDefault();

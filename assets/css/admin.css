@@ -6,6 +6,8 @@
 .admin-side a:hover, .admin-side button:hover { background: rgba(255,255,255,.05); color: #fff; }
 .admin-side a.active { background: rgba(138,124,240,.2); color: #fff; }
 .admin-side .spacer { flex: 1; }
+.nav-badge { float: right; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--pink); color: #fff; font: 700 .75rem/22px var(--font-head); text-align: center; box-shadow: 0 0 12px rgba(232,67,154,.6); }
+.nav-badge[hidden] { display: none; }
 .admin-side .who { font-size: .8rem; color: var(--muted); padding: 8px 14px; word-break: break-all; }
 .admin-main { padding: 32px clamp(16px, 3vw, 40px); min-width: 0; }
 .admin-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }

@@ -222,7 +222,15 @@
 
 ---
 
-## Prompt 23 – *(thêm tiếp ở đây)*
+## Prompt 23 – Badge số record mới trên sidebar admin (24/11/2026)
+**Prompt:**
+> Đối với sidebar của trang admin. Khi có đơn hàng mới hoặc có người đăng ký khoá học mới thì ở menu Đăng ký và Đơn hàng, hãy hiện badge count số record mới. Nếu admin đã click vào menu để xem thì badge sẽ mất
+
+**Kết quả:** Sidebar admin (`assets/js/admin.js`) hiện badge hồng đếm số đăng ký / đơn hàng mới bên cạnh menu **Đăng ký** và **Đơn hàng**. "Mới" = tạo sau lần cuối admin mở trang đó (mốc lưu trong trình duyệt theo email admin). Mở trang Đăng ký hoặc Đơn hàng thì badge của menu đó mất. Badge tự cập nhật mỗi 30 giây. Lần đầu đăng nhập trên một trình duyệt, mọi record cũ được coi là đã xem.
+
+---
+
+## Prompt 24 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

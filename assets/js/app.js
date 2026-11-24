@@ -247,7 +247,7 @@
       <header class="site-header">
         <div class="container nav-wrap">
           <a class="brand" href="${ROOT}index.html" aria-label="Gemini Dance – Trang chủ">
-            <img src="${ROOT}assets/img/logo-lockup.svg" alt="Gemini Dance" width="170" height="42">
+            <img src="${ROOT}assets/img/logo-lockup.svg" alt="Gemini Dance" width="195" height="48">
           </a>
           <button class="nav-toggle" aria-label="Mở menu" aria-expanded="false"><span></span><span></span><span></span></button>
           <nav class="main-nav" aria-label="Menu chính">

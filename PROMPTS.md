@@ -157,7 +157,15 @@
 
 ---
 
-## Prompt 16 – *(thêm tiếp ở đây)*
+## Prompt 16 – Phóng to logo chữ "Gemini Dance" (24/11/2026)
+**Prompt:**
+> Chữ Gemini Dance chỗ này là tên thương hiệu mà nhỏ hơn các chữ bình thường nên rất kỳ. Hãy sửa lại cho thương thích *(kèm ảnh logo ở footer)*
+
+**Kết quả:** Logo ở footer tăng từ 38px lên 64px, logo ở header tăng từ 40px lên 48px, nên chữ "Gemini Dance" trong logo giờ lớn hơn chữ nội dung và nổi bật đúng vai trò tên thương hiệu. Vẫn dùng đúng file logo gốc trong `assets/img/`.
+
+---
+
+## Prompt 17 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

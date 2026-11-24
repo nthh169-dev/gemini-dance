@@ -41,7 +41,7 @@ p { margin: 0 0 1em; }
 /* ---------- Header ---------- */
 .site-header { position: sticky; top: 0; z-index: 50; background: rgba(7,6,13,.78); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(138,124,240,.18); }
 .nav-wrap { display: flex; align-items: center; justify-content: space-between; height: 70px; }
-.brand img { height: 40px; width: auto; }
+.brand img { height: 48px; width: auto; }
 .main-nav { display: flex; align-items: center; gap: 6px; }
 .main-nav a { color: var(--text); font: 500 .95rem var(--font-head); padding: 8px 14px; border-radius: 999px; position: relative; }
 .main-nav a:hover { background: rgba(255,255,255,.06); }
@@ -203,7 +203,7 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .footer-grid h4 { font-size: 1rem; color: var(--gold); }
 .footer-grid a { display: block; color: var(--muted); padding: 3px 0; }
 .footer-grid a:hover { color: #fff; }
-.footer-logo { height: 38px; width: auto; margin-bottom: 14px; }
+.footer-logo { height: 64px; width: auto; margin-bottom: 18px; }
 .socials { display: flex; gap: 10px; }
 .socials a { width: 40px; height: 40px; display: grid !important; place-items: center; border-radius: 50%; background: var(--surface); color: var(--text) !important; }
 .socials a:hover { background: var(--violet); }

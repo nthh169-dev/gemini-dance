@@ -75,7 +75,24 @@
 
 ---
 
-## Prompt 7 – *(thêm tiếp ở đây)*
+## Prompt 7 – Lỗi 127.0.0.1 khi đặt lại mật khẩu (24/11/2026)
+**Prompt:**
+> khi mình thử đặt lại mật khẩu thì bị lỗi không thể truy cập trang web này 127.0.0.1. Lý do vì sao bị lỗi này và cách fix là gì
+
+**Kết quả:** Claude giải thích: link trong email quay về *Site URL* mặc định của Supabase (`127.0.0.1:3000`) vì địa chỉ web chưa nằm trong danh sách Redirect URLs. Cách sửa: cấu hình *Authentication → URL Configuration* (Site URL + Redirect URLs), chạy web bằng `python3 -m http.server 8000`, gửi lại link quên mật khẩu.
+
+---
+
+## Prompt 8 – Deploy lên GitHub Pages (24/11/2026)
+**Prompt:**
+> Vậy bạn hãy deploy lên github page dùm mình
+> https://github.com/nthh169-dev/gemini-dance.git
+
+**Kết quả:** Claude push toàn bộ code lên repo Public `nthh169-dev/gemini-dance` (không kèm `supabase.txt`), điền link vào README/REPORT. Hạnh bật *Settings → Pages* (branch `main`, root). Claude mở thử website https://nthh169-dev.github.io/gemini-dance/ : 9 trang đều tải được, không lỗi JavaScript, dữ liệu lấy từ Supabase thật.
+
+---
+
+## Prompt 9 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

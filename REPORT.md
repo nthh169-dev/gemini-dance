@@ -101,6 +101,8 @@ Chi tiết đầy đủ trong [PROMPTS.md](PROMPTS.md). Tóm tắt:
 | 4 | Tạo file .md và code website vào thư mục `website_dance`, ghi lại mô tả theo đề bài | Tạo đủ file .md, schema Supabase, 13 trang web, kiểm tra trên desktop & mobile |
 | 5 | Làm thêm module quên password cho admin (vì đã quên mật khẩu đặt trên Supabase) | Thêm trang Quên mật khẩu + Đặt mật khẩu mới, link ở trang đăng nhập, mục Đổi mật khẩu ở sidebar admin |
 | 6 | Kết nối database Supabase sau khi đã tạo bảng và thêm admin | Kiểm tra kết nối thật: đọc dữ liệu OK, RLS chặn khách đúng, thử insert/update/delete qua RPC thành công |
+| 7 | Hỏi nguyên nhân lỗi 127.0.0.1 khi đặt lại mật khẩu | Giải thích Site URL / Redirect URLs của Supabase và cách cấu hình |
+| 8 | Deploy lên GitHub Pages | Push code lên repo Public, bật Pages, kiểm tra web online chạy với database thật |
 
 ## 6. Hướng dẫn chạy & deploy
 Xem [README.md](README.md).

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Chi tiết khoá học – Gemini Dance</title>
+<meta name="description" content="Chi tiết khoá học Beginner và Advanced tại Gemini Dance: lịch học, học phí, nội dung.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section class="page-hero">
+    <div class="container" id="course-head">
+      <span class="eyebrow">Chi tiết khoá học</span>
+      <h1>Đang tải…</h1>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:20px">
+    <div class="container split" style="align-items:start" id="course-body"></div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container" style="text-align:center">
+      <h2>Khám phá khoá còn lại</h2>
+      <div class="hero-actions" style="justify-content:center" id="other-course"></div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(async function () {
+  const slug = qs("slug") || "beginner";
+  const courses = await getCourses();
+  const c = courses.find((x) => x.slug === slug) || courses[0];
+  document.title = c.name + " – Gemini Dance";
+
+  let taken = 0;
+  if (sb) {
+    const { data } = await sb.rpc("course_seats");
+    const row = (data || []).find((r) => r.course_id === c.id);
+    taken = row ? Number(row.taken) : 0;
+  }
+  const left = Math.max(0, c.max_students - taken);
+
+  document.getElementById("course-head").innerHTML = `
+    <span class="tag tag-${c.level}">${c.level.toUpperCase()}</span>
+    <h1 style="margin-top:16px">${esc(c.name)}</h1>
+    <p>${esc(c.short_desc)}</p>`;
+
+  document.getElementById("course-body").innerHTML = `
+    <div>
+      <h2>Bạn sẽ học gì?</h2>
+      <p>${esc(c.description)}</p>
+      <ul class="check-list">${(c.highlights || []).map((h) => `<li>${esc(h)}</li>`).join("")}</ul>
+    </div>
+    <div class="form-card">
+      <div class="schedule-pill">
+        <div class="lvl lvl-${c.level}">${c.level.toUpperCase()}</div>
+        <div class="time"><small>${esc(c.schedule_days)}</small><b>${esc(c.schedule_time)}</b></div>
+      </div>
+      <table class="info-table">
+        <tr><th>Lịch học</th><td>${esc(c.schedule_days)}, ${esc(c.schedule_time)}</td></tr>
+        <tr><th>Thời lượng</th><td>${c.duration_weeks} tuần</td></tr>
+        <tr><th>Học phí</th><td><span class="price">${vnd(c.fee)}</span> / khoá</td></tr>
+        <tr><th>Sĩ số tối đa</th><td>${c.max_students} học viên</td></tr>
+        <tr><th>Còn trống</th><td><b style="color:${left ? "var(--cyan)" : "var(--pink)"}">${left} chỗ</b></td></tr>
+        <tr><th>Địa điểm</th><td>${esc(GD_CONFIG.ADDRESS)}</td></tr>
+      </table>
+      <a class="btn btn-primary" style="width:100%;margin-top:22px" href="register.html?course=${c.id}">Đăng ký khoá này</a>
+    </div>`;
+
+  document.getElementById("other-course").innerHTML = courses.filter((x) => x.id !== c.id)
+    .map((x) => `<a class="btn btn-ghost" href="course.html?slug=${encodeURIComponent(x.slug)}">${esc(x.name)}</a>`).join("")
+    + `<a class="btn btn-ghost" href="index.html#khoa-hoc">Về danh sách khoá học</a>`;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Gemini Shop – Trang phục & giày nhảy</title>
+<meta name="description" content="Gemini Shop: bodysuit, crop top, legging, giày heels dance, phụ kiện nhảy trẻ trung cho nữ.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Gemini Shop</span>
+      <h1>Dress to <span class="grad-text">dance</span></h1>
+      <p>Trang phục, giày nhảy và phụ kiện trẻ trung, trendy cho cô nàng 18+. Mặc đẹp để nhảy đẹp.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px">
+    <div class="container">
+      <div class="shop-bar">
+        <div class="chips" id="cat-chips"></div>
+        <div class="tools">
+          <input id="search" type="search" placeholder="Tìm sản phẩm…" style="width:200px">
+          <select id="sort" style="width:auto">
+            <option value="">Mới nhất</option>
+            <option value="asc">Giá thấp → cao</option>
+            <option value="desc">Giá cao → thấp</option>
+          </select>
+        </div>
+      </div>
+      <div class="product-grid" id="grid"><p class="empty">Đang tải sản phẩm…</p></div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(async function () {
+  const all = await getProducts();
+  let cat = qs("cat") || "";
+  const chips = [["", "Tất cả"], ...Object.entries(CATEGORY)];
+  const chipBox = document.getElementById("cat-chips");
+  const render = () => {
+    chipBox.innerHTML = chips.map(([k, v]) => `<button class="chip ${k === cat ? "active" : ""}" data-cat="${k}">${v}</button>`).join("");
+    const q = document.getElementById("search").value.trim().toLowerCase();
+    const sort = document.getElementById("sort").value;
+    let list = all.filter((p) => (!cat || p.category === cat) && (!q || p.name.toLowerCase().includes(q)));
+    const eff = (p) => p.sale_price || p.price;
+    if (sort === "asc") list.sort((a, b) => eff(a) - eff(b));
+    if (sort === "desc") list.sort((a, b) => eff(b) - eff(a));
+    document.getElementById("grid").innerHTML = list.length ? list.map(productCard).join("") : `<p class="empty" style="grid-column:1/-1">Không có sản phẩm phù hợp.</p>`;
+  };
+  chipBox.addEventListener("click", (e) => { const b = e.target.closest("[data-cat]"); if (b) { cat = b.dataset.cat; render(); } });
+  document.getElementById("search").addEventListener("input", render);
+  document.getElementById("sort").addEventListener("change", render);
+  render();
+})();
+</script>
+</body>
+</html>

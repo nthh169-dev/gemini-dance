@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Quản lý đăng ký – Gemini Dance Admin</title>
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-root="../" data-no-track>
+<div class="admin-layout">
+  <aside class="admin-side" id="admin-side"></aside>
+  <main class="admin-main">
+    <div class="admin-top">
+      <h1>Quản lý đăng ký</h1>
+      <div class="filters">
+        <input id="q" type="search" placeholder="Tìm tên, SĐT, mã…">
+        <select id="f-course"><option value="">Tất cả khoá</option></select>
+        <select id="f-status"><option value="">Tất cả trạng thái</option></select>
+      </div>
+    </div>
+    <div class="table-wrap"><table class="data-table" id="tbl"></table></div>
+  </main>
+</div>
+
+<dialog id="dlg">
+  <form id="edit" method="dialog" class="form-grid">
+    <h3 class="full">Sửa đăng ký <span id="dlg-code"></span></h3>
+    <div class="full"><label>Họ tên</label><input name="full_name" required></div>
+    <div><label>SĐT</label><input name="phone" required></div>
+    <div><label>Email</label><input name="email" type="email"></div>
+    <div><label>Khoá học</label><select name="course_id"></select></div>
+    <div><label>Trạng thái</label><select name="status"></select></div>
+    <div class="full"><label>Ghi chú</label><textarea name="note"></textarea></div>
+    <div class="full" style="display:flex;gap:10px"><button class="btn btn-primary" value="save">Lưu</button><button class="btn btn-ghost" value="cancel" formnovalidate>Đóng</button></div>
+  </form>
+</dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script>
+(async function () {
+  await requireAdmin();
+  let rows = [], courses = [];
+  const { data: c } = await sb.from("courses").select("id, name").order("id");
+  courses = c || [];
+  const cname = Object.fromEntries(courses.map((x) => [x.id, x.name]));
+  const courseOpts = courses.map((x) => `<option value="${x.id}">${esc(x.name)}</option>`).join("");
+  document.getElementById("f-course").innerHTML += courseOpts;
+  document.getElementById("f-status").innerHTML += Object.entries(STATUS_REG).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+  const dlg = document.getElementById("dlg"), form = document.getElementById("edit");
+  form.course_id.innerHTML = courseOpts;
+  form.status.innerHTML = Object.entries(STATUS_REG).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+
+  async function load() {
+    const { data, error } = await sb.from("registrations").select("*").order("created_at", { ascending: false });
+    if (error) return toast(error.message, "err");
+    rows = data; render();
+  }
+  function render() {
+    const q = document.getElementById("q").value.toLowerCase(), fc = document.getElementById("f-course").value, fs = document.getElementById("f-status").value;
+    const list = rows.filter((r) => (!fc || String(r.course_id) === fc) && (!fs || r.status === fs) &&
+      (!q || [r.full_name, r.phone, r.code, r.email].join(" ").toLowerCase().includes(q)));
+    document.getElementById("tbl").innerHTML = `<tr><th>Mã</th><th>Họ tên</th><th>SĐT</th><th>Email</th><th>Năm sinh</th><th>Khoá</th><th>Ghi chú</th><th>Trạng thái</th><th>Ngày ĐK</th><th></th></tr>` +
+      (list.map((r) => `<tr>
+        <td><b>${esc(r.code)}</b></td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(r.email || "")}</td><td>${r.birth_year || ""}</td>
+        <td>${esc(cname[r.course_id] || "")}</td><td class="wrap">${esc(r.note || "")}</td>
+        <td>${statusSelect(STATUS_REG, r.status, `data-status="${r.id}"`)}</td><td>${fmtDate(r.created_at)}</td>
+        <td class="row-actions"><button class="btn btn-ghost btn-sm" data-edit="${r.id}">Sửa</button><button class="btn btn-danger btn-sm" data-del="${r.id}">Xoá</button></td>
+      </tr>`).join("") || `<tr><td colspan="10" class="muted">Không có dữ liệu.</td></tr>`);
+  }
+  ["q", "f-course", "f-status"].forEach((id) => document.getElementById(id).addEventListener("input", render));
+
+  const tbl = document.getElementById("tbl");
+  // UPDATE trạng thái nhanh
+  tbl.addEventListener("change", async (e) => {
+    const id = e.target.dataset.status; if (!id) return;
+    const { error } = await sb.from("registrations").update({ status: e.target.value, updated_at: new Date().toISOString() }).eq("id", id);
+    if (error) toast(error.message, "err"); else { toast("Đã cập nhật trạng thái"); rows.find((r) => r.id == id).status = e.target.value; }
+  });
+  tbl.addEventListener("click", async (e) => {
+    // DELETE
+    if (e.target.dataset.del) {
+      if (!confirm("Xoá đăng ký này?")) return;
+      const { error } = await sb.from("registrations").delete().eq("id", e.target.dataset.del);
+      if (error) toast(error.message, "err"); else { toast("Đã xoá"); load(); }
+    }
+    // Mở form sửa
+    if (e.target.dataset.edit) {
+      const r = rows.find((x) => x.id == e.target.dataset.edit);
+      form.dataset.id = r.id; document.getElementById("dlg-code").textContent = r.code;
+      ["full_name", "phone", "email", "note", "course_id", "status"].forEach((k) => (form[k].value = r[k] ?? ""));
+      dlg.returnValue = ""; dlg.showModal();
+    }
+  });
+  // UPDATE đầy đủ
+  dlg.addEventListener("close", async () => {
+    if (dlg.returnValue !== "save") return;
+    const v = Object.fromEntries(new FormData(form));
+    const { error } = await sb.from("registrations").update({ ...v, course_id: Number(v.course_id), email: v.email || null, note: v.note || null, updated_at: new Date().toISOString() }).eq("id", form.dataset.id);
+    if (error) toast(error.message, "err"); else { toast("Đã lưu"); load(); }
+  });
+  load();
+})();
+</script>
+</body>
+</html>

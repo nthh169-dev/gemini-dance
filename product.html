@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Chi tiết sản phẩm – Gemini Shop</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section class="section" style="padding-top:40px">
+    <div class="container">
+      <p class="muted" id="crumbs"><a href="index.html">Trang chủ</a> / <a href="shop.html">Gemini Shop</a></p>
+      <div class="product-detail" id="detail"><p class="empty">Đang tải…</p></div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2 style="text-align:center">Có thể bạn cũng thích</h2>
+      <div class="product-grid" id="related" style="margin-top:28px"></div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(async function () {
+  const all = await getProducts();
+  const p = all.find((x) => String(x.id) === qs("id")) || all[0];
+  document.title = p.name + " – Gemini Shop";
+  document.getElementById("crumbs").innerHTML += ` / <a href="shop.html?cat=${p.category}">${esc(CATEGORY[p.category])}</a> / <span>${esc(p.name)}</span>`;
+
+  let size = (p.sizes || [])[0] || "", color = (p.colors || [])[0] || "";
+  const opt = (name, list, val) => `<div class="option-group"><label>${name}</label><div class="chips" data-opt="${name}">${
+    list.map((v) => `<button type="button" class="chip ${v === val ? "active" : ""}" data-v="${esc(v)}">${esc(v)}</button>`).join("")}</div></div>`;
+
+  document.getElementById("detail").innerHTML = `
+    <div class="gallery">${p.badge ? `<span class="badge badge-${p.badge}">${p.badge}</span>` : ""}${productImage(p)}</div>
+    <div>
+      <span class="eyebrow">${esc(CATEGORY[p.category])}</span>
+      <h1 style="font-size:clamp(1.8rem,4vw,2.6rem)">${esc(p.name)}</h1>
+      <p style="font-size:1.3rem">${priceHtml(p)}</p>
+      <p class="muted">${esc(p.description || "")}</p>
+      ${opt("Size", p.sizes || [], size)}
+      ${opt("Màu", p.colors || [], color)}
+      <div class="option-group"><label>Số lượng</label>
+        <div class="qty"><button type="button" id="minus" aria-label="Giảm">−</button><input id="qty" value="1" inputmode="numeric" aria-label="Số lượng"><button type="button" id="plus" aria-label="Tăng">+</button></div>
+        <span class="muted" style="margin-left:12px">Còn ${p.stock} sản phẩm</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="add" ${p.stock ? "" : "disabled"}>${p.stock ? "Thêm vào giỏ" : "Hết hàng"}</button>
+        <a class="btn btn-ghost" href="cart.html">Xem giỏ hàng</a>
+      </div>
+    </div>`;
+
+  document.querySelectorAll("[data-opt]").forEach((g) => g.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-v]"); if (!b) return;
+    g.querySelectorAll(".chip").forEach((c) => c.classList.toggle("active", c === b));
+    if (g.dataset.opt === "Size") size = b.dataset.v; else color = b.dataset.v;
+  }));
+  const qty = document.getElementById("qty");
+  const clamp = (n) => Math.min(Math.max(1, n || 1), p.stock || 1);
+  document.getElementById("minus").onclick = () => (qty.value = clamp(+qty.value - 1));
+  document.getElementById("plus").onclick = () => (qty.value = clamp(+qty.value + 1));
+  qty.onchange = () => (qty.value = clamp(+qty.value));
+  document.getElementById("add").onclick = () => {
+    Cart.add({ product_id: p.id, name: p.name, price: p.sale_price || p.price, size, color, qty: clamp(+qty.value) });
+    toast(`Đã thêm "${p.name}" vào giỏ hàng`);
+  };
+
+  document.getElementById("related").innerHTML = all.filter((x) => x.category === p.category && x.id !== p.id).slice(0, 4).map(productCard).join("");
+})();
+</script>
+</body>
+</html>

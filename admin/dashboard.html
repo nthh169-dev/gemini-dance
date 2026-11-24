@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Dashboard – Gemini Dance Admin</title>
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-root="../" data-no-track>
+<div class="admin-layout">
+  <aside class="admin-side" id="admin-side"></aside>
+  <main class="admin-main">
+    <div class="admin-top">
+      <h1>Dashboard</h1>
+      <select id="range" style="width:auto">
+        <option value="7">7 ngày qua</option>
+        <option value="14" selected>14 ngày qua</option>
+        <option value="30">30 ngày qua</option>
+      </select>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><small>Tổng người đăng ký</small><b id="s-reg">–</b><span id="s-reg-sub"></span></div>
+      <div class="stat"><small>Lượt truy cập</small><b id="s-views">–</b><span id="s-views-sub"></span></div>
+      <div class="stat"><small>Đơn hàng</small><b id="s-orders">–</b><span id="s-orders-sub"></span></div>
+      <div class="stat"><small>Doanh thu (không tính đơn huỷ)</small><b id="s-rev">–</b><span id="s-rev-sub"></span></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="panel"><h3>Lượt truy cập & đăng ký theo ngày</h3><div class="chart-box"><canvas id="c-daily"></canvas></div></div>
+      <div class="panel"><h3>Đăng ký theo khoá học</h3><div class="chart-box"><canvas id="c-course"></canvas></div></div>
+    </div>
+    <div class="chart-grid">
+      <div class="panel"><h3>Trang được xem nhiều nhất</h3><div class="chart-box"><canvas id="c-pages"></canvas></div></div>
+      <div class="panel"><h3>Sản phẩm bán chạy</h3><div id="top-products"></div></div>
+    </div>
+
+    <div class="panel">
+      <h3>Đăng ký mới nhất</h3>
+      <div class="table-wrap" style="border:0"><table class="data-table" id="latest"></table></div>
+      <p style="margin-top:12px"><a href="registrations.html">Xem tất cả →</a></p>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script>
+(async function () {
+  await requireAdmin();
+  Chart.defaults.color = "#a9a3c9";
+  Chart.defaults.borderColor = "rgba(138,124,240,.15)";
+  Chart.defaults.font.family = "Be Vietnam Pro, sans-serif";
+  const charts = {};
+  const draw = (id, cfg) => { charts[id]?.destroy(); charts[id] = new Chart(document.getElementById(id), cfg); };
+
+  async function load() {
+    const days = Number(document.getElementById("range").value);
+    const since = new Date(); since.setHours(0, 0, 0, 0); since.setDate(since.getDate() - days + 1);
+
+    const [regs, courses, views, orders, items] = await Promise.all([
+      sb.from("registrations").select("id, code, full_name, phone, course_id, status, created_at").order("created_at", { ascending: false }),
+      sb.from("courses").select("id, name, level"),
+      sb.from("page_views").select("page, session_id, created_at").gte("created_at", since.toISOString()).limit(10000),
+      sb.from("orders").select("id, total, status, created_at"),
+      sb.from("order_items").select("product_name, qty, order_id")
+    ]);
+    const R = regs.data || [], CO = courses.data || [], V = views.data || [], O = orders.data || [], I = items.data || [];
+    const cname = Object.fromEntries(CO.map((c) => [c.id, c.name]));
+
+    // Thẻ số liệu
+    const active = R.filter((r) => r.status !== "cancelled");
+    document.getElementById("s-reg").textContent = active.length;
+    document.getElementById("s-reg-sub").textContent = CO.map((c) => `${c.level === "beginner" ? "Beginner" : "Advanced"}: ${active.filter((r) => r.course_id === c.id).length}`).join(" · ");
+    document.getElementById("s-views").textContent = V.length.toLocaleString("vi-VN");
+    document.getElementById("s-views-sub").textContent = `${new Set(V.map((v) => v.session_id)).size} phiên · ${days} ngày qua`;
+    const okOrders = O.filter((o) => o.status !== "cancelled");
+    document.getElementById("s-orders").textContent = O.length;
+    document.getElementById("s-orders-sub").textContent = `${O.filter((o) => o.status === "new").length} đơn mới chờ xử lý`;
+    document.getElementById("s-rev").textContent = vnd(okOrders.reduce((s, o) => s + o.total, 0));
+    document.getElementById("s-rev-sub").textContent = `${O.filter((o) => o.status === "done").length} đơn hoàn thành`;
+
+    // Biểu đồ theo ngày
+    const labels = [], keys = [];
+    for (let i = 0; i < days; i++) { const d = new Date(since); d.setDate(since.getDate() + i); keys.push(d.toDateString()); labels.push(d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })); }
+    const countBy = (arr) => keys.map((k) => arr.filter((x) => new Date(x.created_at).toDateString() === k).length);
+    draw("c-daily", { type: "line", data: { labels, datasets: [
+      { label: "Lượt truy cập", data: countBy(V), borderColor: "#3ee6df", backgroundColor: "rgba(62,230,223,.15)", fill: true, tension: .35 },
+      { label: "Đăng ký", data: countBy(R), borderColor: "#e8439a", backgroundColor: "#e8439a", tension: .35, yAxisID: "y1" }
+    ] }, options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, y1: { beginAtZero: true, position: "right", grid: { drawOnChartArea: false }, ticks: { precision: 0 } } } } });
+
+    draw("c-course", { type: "doughnut", data: { labels: CO.map((c) => c.name), datasets: [{
+      data: CO.map((c) => active.filter((r) => r.course_id === c.id).length), backgroundColor: ["#8a7cf0", "#2f5da8", "#3ee6df", "#e8439a"], borderWidth: 0 }] },
+      options: { maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } } });
+
+    const PAGE_NAME = { index: "Trang chủ", about: "Về chúng tôi", course: "Chi tiết khoá học", register: "Đăng ký", shop: "Shop", product: "Chi tiết SP", cart: "Giỏ hàng" };
+    const pc = {}; V.forEach((v) => (pc[v.page] = (pc[v.page] || 0) + 1));
+    const top = Object.entries(pc).sort((a, b) => b[1] - a[1]).slice(0, 7);
+    draw("c-pages", { type: "bar", data: { labels: top.map(([k]) => PAGE_NAME[k] || k), datasets: [{ label: "Lượt xem", data: top.map(([, v]) => v), backgroundColor: "#8a7cf0", borderRadius: 6 }] },
+      options: { maintainAspectRatio: false, indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } } });
+
+    const okIds = new Set(okOrders.map((o) => o.id)), sold = {};
+    I.filter((i) => okIds.has(i.order_id)).forEach((i) => (sold[i.product_name] = (sold[i.product_name] || 0) + i.qty));
+    const best = Object.entries(sold).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    document.getElementById("top-products").innerHTML = best.length
+      ? `<table class="data-table">${best.map(([n, q], i) => `<tr><td>${i + 1}. ${esc(n)}</td><td style="text-align:right"><b>${q}</b> cái</td></tr>`).join("")}</table>`
+      : `<p class="muted">Chưa có đơn hàng.</p>`;
+
+    document.getElementById("latest").innerHTML = `<tr><th>Mã</th><th>Họ tên</th><th>SĐT</th><th>Khoá</th><th>Trạng thái</th><th>Ngày</th></tr>` +
+      (R.slice(0, 6).map((r) => `<tr><td>${esc(r.code)}</td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(cname[r.course_id] || "")}</td>
+        <td><span class="status status-${r.status}">${STATUS_REG[r.status]}</span></td><td>${fmtDate(r.created_at)}</td></tr>`).join("") || `<tr><td colspan="6" class="muted">Chưa có đăng ký.</td></tr>`);
+  }
+  document.getElementById("range").addEventListener("change", load);
+  load();
+})();
+</script>
+</body>
+</html>

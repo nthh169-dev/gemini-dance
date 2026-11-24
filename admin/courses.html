@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Quản lý khoá học – Gemini Dance Admin</title>
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-root="../" data-no-track>
+<div class="admin-layout">
+  <aside class="admin-side" id="admin-side"></aside>
+  <main class="admin-main">
+    <div class="admin-top">
+      <h1>Quản lý khoá học</h1>
+      <button class="btn btn-primary" id="add">+ Thêm khoá học</button>
+    </div>
+    <div class="table-wrap"><table class="data-table" id="tbl"></table></div>
+  </main>
+</div>
+
+<dialog id="dlg">
+  <form id="edit" method="dialog" class="form-grid">
+    <h3 class="full" id="dlg-title">Khoá học</h3>
+    <div><label>Slug (dùng trên URL)</label><input name="slug" required pattern="[a-z0-9-]+"></div>
+    <div><label>Cấp độ</label><select name="level"><option value="beginner">Beginner</option><option value="advanced">Advanced</option></select></div>
+    <div class="full"><label>Tên khoá</label><input name="name" required></div>
+    <div><label>Ngày học</label><input name="schedule_days" required></div>
+    <div><label>Giờ học</label><input name="schedule_time" required></div>
+    <div><label>Học phí (VNĐ)</label><input name="fee" type="number" min="0" step="1000" required></div>
+    <div><label>Số tuần</label><input name="duration_weeks" type="number" min="1" required></div>
+    <div><label>Sĩ số tối đa</label><input name="max_students" type="number" min="1" required></div>
+    <div><label>Hiển thị</label><select name="is_active"><option value="true">Có</option><option value="false">Ẩn</option></select></div>
+    <div class="full"><label>Mô tả ngắn</label><input name="short_desc"></div>
+    <div class="full"><label>Mô tả chi tiết</label><textarea name="description"></textarea></div>
+    <div class="full"><label>Nội dung học (mỗi dòng 1 ý)</label><textarea name="highlights"></textarea></div>
+    <div class="full" style="display:flex;gap:10px"><button class="btn btn-primary" value="save">Lưu</button><button class="btn btn-ghost" value="cancel" formnovalidate>Đóng</button></div>
+  </form>
+</dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script>
+(async function () {
+  await requireAdmin();
+  let rows = [];
+  const dlg = document.getElementById("dlg"), form = document.getElementById("edit");
+  const FIELDS = ["slug", "level", "name", "schedule_days", "schedule_time", "fee", "duration_weeks", "max_students", "short_desc", "description"];
+
+  async function load() {
+    const { data, error } = await sb.from("courses").select("*").order("id");
+    if (error) return toast(error.message, "err");
+    rows = data;
+    document.getElementById("tbl").innerHTML = `<tr><th>ID</th><th>Tên khoá</th><th>Cấp độ</th><th>Lịch</th><th>Học phí</th><th>Sĩ số</th><th>Hiển thị</th><th></th></tr>` +
+      rows.map((c) => `<tr><td>${c.id}</td><td><b>${esc(c.name)}</b><br><small class="muted">/${esc(c.slug)}</small></td>
+        <td><span class="tag tag-${c.level}">${c.level.toUpperCase()}</span></td><td>${esc(c.schedule_days)}<br>${esc(c.schedule_time)}</td>
+        <td>${vnd(c.fee)}</td><td>${c.max_students}</td><td>${c.is_active ? "✅" : "—"}</td>
+        <td class="row-actions"><button class="btn btn-ghost btn-sm" data-edit="${c.id}">Sửa</button><button class="btn btn-danger btn-sm" data-del="${c.id}">Xoá</button></td></tr>`).join("");
+  }
+  function open(c) {
+    form.dataset.id = c ? c.id : "";
+    document.getElementById("dlg-title").textContent = c ? "Sửa khoá học" : "Thêm khoá học";
+    FIELDS.forEach((k) => (form[k].value = c ? (c[k] ?? "") : ""));
+    form.is_active.value = c ? String(c.is_active) : "true";
+    form.highlights.value = c ? (c.highlights || []).join("\n") : "";
+    if (!c) { form.level.value = "beginner"; form.duration_weeks.value = 8; form.max_students.value = 20; }
+    dlg.returnValue = ""; dlg.showModal();
+  }
+  document.getElementById("add").onclick = () => open(null);
+  document.getElementById("tbl").addEventListener("click", async (e) => {
+    if (e.target.dataset.edit) open(rows.find((c) => c.id == e.target.dataset.edit));
+    if (e.target.dataset.del) {
+      if (!confirm("Xoá khoá học này? Các đăng ký thuộc khoá cũng sẽ bị xoá.")) return;
+      const { error } = await sb.from("courses").delete().eq("id", e.target.dataset.del);
+      if (error) toast(error.message, "err"); else { toast("Đã xoá khoá học"); load(); }
+    }
+  });
+  dlg.addEventListener("close", async () => {
+    if (dlg.returnValue !== "save") return;
+    const v = Object.fromEntries(FIELDS.map((k) => [k, form[k].value]));
+    ["fee", "duration_weeks", "max_students"].forEach((k) => (v[k] = Number(v[k])));
+    v.is_active = form.is_active.value === "true";
+    v.highlights = form.highlights.value.split("\n").map((s) => s.trim()).filter(Boolean);
+    const id = form.dataset.id;
+    const { error } = id ? await sb.from("courses").update(v).eq("id", id) : await sb.from("courses").insert(v);
+    if (error) toast(error.message, "err"); else { toast(id ? "Đã cập nhật khoá học" : "Đã thêm khoá học"); load(); }
+  });
+  load();
+})();
+</script>
+</body>
+</html>

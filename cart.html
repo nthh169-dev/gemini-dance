@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Giỏ hàng – Gemini Shop</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section class="page-hero" style="padding-bottom:20px">
+    <div class="container">
+      <span class="eyebrow">Gemini Shop</span>
+      <h1>Giỏ hàng</h1>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px">
+    <div class="container cart-layout">
+      <div class="form-card">
+        <div id="cart-items"></div>
+        <a href="shop.html" class="btn btn-ghost btn-sm" style="margin-top:18px">← Tiếp tục mua sắm</a>
+      </div>
+      <div class="form-card">
+        <h3>Tóm tắt đơn hàng</h3>
+        <div id="summary"></div>
+        <form id="order-form" style="display:grid;gap:12px;margin-top:18px">
+          <div><label for="o-name">Họ và tên *</label><input id="o-name" name="name" required></div>
+          <div><label for="o-phone">Số điện thoại *</label><input id="o-phone" name="phone" required pattern="[0-9+ ]{9,15}"></div>
+          <div><label for="o-email">Email</label><input id="o-email" name="email" type="email"></div>
+          <div><label for="o-addr">Địa chỉ giao hàng *</label><input id="o-addr" name="address" required></div>
+          <div><label for="o-note">Ghi chú</label><textarea id="o-note" name="note" style="min-height:60px"></textarea></div>
+          <button class="btn btn-primary" type="submit">Đặt hàng (COD)</button>
+        </form>
+        <div id="order-result"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container" style="max-width:720px">
+      <h2 style="text-align:center">Tra cứu đơn hàng</h2>
+      <form id="track-form" class="form-grid form-card">
+        <div><label for="t-code">Mã đơn hàng</label><input id="t-code" required placeholder="GDxxxxxx"></div>
+        <div><label for="t-phone">Số điện thoại</label><input id="t-phone" required></div>
+        <div class="full"><button class="btn btn-ghost" type="submit">Tra cứu</button></div>
+      </form>
+      <div id="track-result"></div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(async function () {
+  const products = await getProducts();
+  const byId = Object.fromEntries(products.map((p) => [p.id, p]));
+  const SHIP = 30000;
+
+  function render() {
+    const items = Cart.get();
+    const box = document.getElementById("cart-items");
+    if (!items.length) {
+      box.innerHTML = `<p class="empty">Giỏ hàng đang trống. <a href="shop.html">Ghé Gemini Shop</a> nhé!</p>`;
+    } else {
+      box.innerHTML = items.map((i, idx) => `
+        <div class="cart-item">
+          <div class="thumb">${productImage(byId[i.product_id] || { id: i.product_id, name: i.name, category: "phu-kien" })}</div>
+          <div>
+            <a href="product.html?id=${i.product_id}"><b>${esc(i.name)}</b></a>
+            <div class="muted" style="font-size:.88rem">${esc(i.size)} · ${esc(i.color)} · ${vnd(i.price)}</div>
+            <div class="qty" style="margin-top:8px"><button data-dec="${idx}" aria-label="Giảm">−</button><input value="${i.qty}" data-set="${idx}" aria-label="Số lượng"><button data-inc="${idx}" aria-label="Tăng">+</button></div>
+          </div>
+          <div style="text-align:right"><div class="price">${vnd(i.price * i.qty)}</div><button class="remove" data-del="${idx}">Xoá</button></div>
+        </div>`).join("");
+    }
+    const sub = items.reduce((s, i) => s + i.price * i.qty, 0);
+    document.getElementById("summary").innerHTML = `
+      <div class="summary-row"><span>Tạm tính</span><span>${vnd(sub)}</span></div>
+      <div class="summary-row"><span>Phí giao hàng</span><span>${items.length ? vnd(SHIP) : vnd(0)}</span></div>
+      <div class="summary-row total"><span>Tổng cộng</span><span class="price">${vnd(items.length ? sub + SHIP : 0)}</span></div>
+      <p class="muted" style="font-size:.82rem">Phí giao hàng thu khi nhận hàng.</p>`;
+  }
+
+  document.getElementById("cart-items").addEventListener("click", (e) => {
+    const items = Cart.get(), t = e.target;
+    if (t.dataset.inc) items[t.dataset.inc].qty++;
+    else if (t.dataset.dec) items[t.dataset.dec].qty = Math.max(1, items[t.dataset.dec].qty - 1);
+    else if (t.dataset.del) items.splice(t.dataset.del, 1);
+    else return;
+    Cart.save(items); render();
+  });
+  document.getElementById("cart-items").addEventListener("change", (e) => {
+    if (!e.target.dataset.set) return;
+    const items = Cart.get();
+    items[e.target.dataset.set].qty = Math.max(1, parseInt(e.target.value) || 1);
+    Cart.save(items); render();
+  });
+
+  document.getElementById("order-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const items = Cart.get();
+    if (!items.length) { toast("Giỏ hàng trống.", "err"); return; }
+    if (!sb) { toast("Chưa kết nối được database.", "err"); return; }
+    const f = e.target, btn = f.querySelector("button");
+    btn.disabled = true;
+    const { data, error } = await sb.rpc("place_order", {
+      p_name: f.name.value, p_phone: f.phone.value, p_email: f.email.value, p_address: f.address.value, p_note: f.note.value,
+      p_items: items.map((i) => ({ product_id: i.product_id, size: i.size, color: i.color, qty: i.qty }))
+    });
+    btn.disabled = false;
+    if (error) { toast("Đặt hàng thất bại: " + error.message, "err"); return; }
+    Cart.save([]); render(); f.reset();
+    document.getElementById("order-result").innerHTML = `
+      <div class="result-box"><p>💖 Đặt hàng thành công! Mã đơn:</p><div class="code-big grad-text">${esc(data.code)}</div>
+      <p class="muted">Tổng tiền hàng ${vnd(data.total)} (+ phí giao ${vnd(SHIP)}). Shop sẽ gọi xác nhận sớm nhé.</p></div>`;
+  });
+
+  document.getElementById("track-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!sb) return;
+    const { data } = await sb.rpc("find_order", { p_code: document.getElementById("t-code").value, p_phone: document.getElementById("t-phone").value });
+    const ST = { new: "Mới", shipping: "Đang giao", done: "Hoàn thành", cancelled: "Đã huỷ" };
+    document.getElementById("track-result").innerHTML = !data ? `<p class="result-box">Không tìm thấy đơn hàng.</p>` : `
+      <div class="result-box">
+        <p>Đơn <b>${esc(data.code)}</b> · <span class="status status-${data.status}">${ST[data.status]}</span> · ${fmtDate(data.created_at)}</p>
+        <ul>${(data.items || []).map((i) => `<li>${esc(i.name)} (${esc(i.size)}, ${esc(i.color)}) × ${i.qty} – ${vnd(i.price * i.qty)}</li>`).join("")}</ul>
+        <p><b>Tổng: ${vnd(data.total)}</b> · Giao tới: ${esc(data.address)}</p>
+      </div>`;
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

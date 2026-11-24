@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Đăng ký khoá học – Gemini Dance</title>
+<meta name="description" content="Đăng ký, tra cứu, sửa hoặc huỷ đăng ký khoá học Gemini Dance.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Đăng ký khoá học</span>
+      <h1>Sẵn sàng <span class="grad-text">toả sáng</span>?</h1>
+      <p>Điền thông tin để giữ chỗ. Bạn sẽ nhận một <b>mã đăng ký</b> để tra cứu, sửa hoặc huỷ bất cứ lúc nào.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px">
+    <div class="container" style="max-width:820px">
+      <div class="tabs" role="tablist">
+        <button class="chip active" data-tab="new" role="tab">Đăng ký mới</button>
+        <button class="chip" data-tab="lookup" role="tab">Tra cứu · Sửa · Huỷ</button>
+      </div>
+
+      <!-- TAB 1: INSERT -->
+      <div class="form-card" id="tab-new">
+        <form id="reg-form" class="form-grid">
+          <div class="full"><label for="r-name">Họ và tên *</label><input id="r-name" name="full_name" required minlength="2" maxlength="80" placeholder="Nguyễn Thị Hạnh"></div>
+          <div><label for="r-phone">Số điện thoại *</label><input id="r-phone" name="phone" required pattern="[0-9+ ]{9,15}" placeholder="09xx xxx xxx"></div>
+          <div><label for="r-email">Email</label><input id="r-email" name="email" type="email" placeholder="ban@email.com"></div>
+          <div><label for="r-year">Năm sinh</label><input id="r-year" name="birth_year" type="number" min="1950" max="2008" placeholder="2002"></div>
+          <div><label for="r-course">Khoá học *</label><select id="r-course" name="course_id" required></select></div>
+          <div class="full"><label for="r-note">Ghi chú</label><textarea id="r-note" name="note" placeholder="Bạn đã từng học nhảy chưa? Muốn học dòng nhảy nào?"></textarea></div>
+          <div class="full"><button class="btn btn-primary" type="submit">Gửi đăng ký</button></div>
+        </form>
+        <div id="reg-result"></div>
+      </div>
+
+      <!-- TAB 2: SELECT / UPDATE / DELETE -->
+      <div class="form-card" id="tab-lookup" hidden>
+        <form id="lookup-form" class="form-grid">
+          <div><label for="l-code">Mã đăng ký</label><input id="l-code" required placeholder="VD: A1B2C3" style="text-transform:uppercase"></div>
+          <div><label for="l-phone">Số điện thoại đã đăng ký</label><input id="l-phone" required></div>
+          <div class="full"><button class="btn btn-ghost" type="submit">Tra cứu</button></div>
+        </form>
+        <div id="lookup-result"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(async function () {
+  const courses = await getCourses();
+  const opts = (sel) => courses.map((c) => `<option value="${c.id}" ${String(c.id) === String(sel) ? "selected" : ""}>${esc(c.name)} · ${esc(c.schedule_days)} ${esc(c.schedule_time)}</option>`).join("");
+  document.getElementById("r-course").innerHTML = opts(qs("course"));
+
+  // Tabs
+  document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("[data-tab]").forEach((x) => x.classList.toggle("active", x === b));
+    document.getElementById("tab-new").hidden = b.dataset.tab !== "new";
+    document.getElementById("tab-lookup").hidden = b.dataset.tab !== "lookup";
+  }));
+
+  const needDb = () => { if (!sb) { toast("Chưa kết nối được database.", "err"); return true; } return false; };
+  const yearVal = (v) => (v ? Number(v) : null);
+
+  // INSERT
+  document.getElementById("reg-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (needDb()) return;
+    const f = e.target, btn = f.querySelector("button");
+    btn.disabled = true;
+    const { data, error } = await sb.rpc("register_course", {
+      p_full_name: f.full_name.value, p_phone: f.phone.value, p_email: f.email.value,
+      p_birth_year: yearVal(f.birth_year.value), p_course_id: Number(f.course_id.value), p_note: f.note.value
+    });
+    btn.disabled = false;
+    if (error) { toast("Đăng ký thất bại: " + error.message, "err"); return; }
+    const phone = f.phone.value;
+    f.reset();
+    document.getElementById("reg-result").innerHTML = `
+      <div class="result-box">
+        <p>🎉 Đăng ký thành công! Mã đăng ký của bạn:</p>
+        <div class="code-big grad-text">${esc(data.code)}</div>
+        <p class="muted">Hãy lưu lại mã này cùng số điện thoại <b>${esc(phone)}</b> để tra cứu, sửa hoặc huỷ. Gemini Dance sẽ gọi xác nhận trong 24h.</p>
+      </div>`;
+    toast("Đăng ký thành công!");
+  });
+
+  // SELECT
+  let current = null;
+  document.getElementById("lookup-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (needDb()) return;
+    const code = document.getElementById("l-code").value, phone = document.getElementById("l-phone").value;
+    const { data, error } = await sb.rpc("find_registration", { p_code: code, p_phone: phone });
+    const box = document.getElementById("lookup-result");
+    if (error || !data) { box.innerHTML = `<p class="result-box">Không tìm thấy đăng ký với mã và số điện thoại này.</p>`; return; }
+    current = { code, phone };
+    const STATUS = { pending: "Chờ xác nhận", confirmed: "Đã xác nhận", cancelled: "Đã huỷ" };
+    box.innerHTML = `
+      <div class="result-box">
+        <p>Mã <b>${esc(data.code)}</b> · <span class="status status-${data.status}">${STATUS[data.status]}</span> · đăng ký lúc ${fmtDate(data.created_at)}</p>
+        <form id="edit-form" class="form-grid">
+          <div class="full"><label>Họ và tên</label><input name="full_name" required value="${esc(data.full_name)}"></div>
+          <div><label>Email</label><input name="email" type="email" value="${esc(data.email || "")}"></div>
+          <div><label>Năm sinh</label><input name="birth_year" type="number" min="1950" max="2008" value="${data.birth_year || ""}"></div>
+          <div class="full"><label>Khoá học</label><select name="course_id">${opts(data.course_id)}</select></div>
+          <div class="full"><label>Ghi chú</label><textarea name="note">${esc(data.note || "")}</textarea></div>
+          <div class="full" style="display:flex;gap:12px;flex-wrap:wrap">
+            <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
+            <button class="btn btn-danger" type="button" id="cancel-btn">Huỷ đăng ký</button>
+          </div>
+        </form>
+      </div>`;
+
+    // UPDATE
+    document.getElementById("edit-form").addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const f = ev.target;
+      const { data: ok, error } = await sb.rpc("update_registration", {
+        p_code: current.code, p_phone: current.phone, p_full_name: f.full_name.value, p_email: f.email.value,
+        p_birth_year: yearVal(f.birth_year.value), p_course_id: Number(f.course_id.value), p_note: f.note.value
+      });
+      if (error || !ok) toast("Không cập nhật được: " + (error ? error.message : "không tìm thấy"), "err");
+      else toast("Đã cập nhật đăng ký!");
+    });
+
+    // DELETE
+    document.getElementById("cancel-btn").addEventListener("click", async () => {
+      if (!confirm("Bạn chắc chắn muốn huỷ đăng ký này?")) return;
+      const { data: ok, error } = await sb.rpc("cancel_registration", { p_code: current.code, p_phone: current.phone });
+      if (error || !ok) { toast("Không huỷ được.", "err"); return; }
+      box.innerHTML = `<p class="result-box">Đã huỷ đăng ký <b>${esc(current.code)}</b>. Hẹn gặp lại bạn ở khoá sau nhé!</p>`;
+      toast("Đã huỷ đăng ký.");
+    });
+  });
+})();
+</script>
+</body>
+</html>

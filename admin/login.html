@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Đăng nhập Admin – Gemini Dance</title>
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-root="../" data-no-track>
+<main class="login-wrap">
+  <div class="form-card login-card">
+    <a href="../index.html"><img src="../assets/img/logo-lockup.svg" alt="Gemini Dance"></a>
+    <h1 style="font-size:1.5rem;text-align:center">Đăng nhập quản trị</h1>
+    <div id="msg"></div>
+    <form id="login-form" style="display:grid;gap:14px">
+      <div><label for="email">Email</label><input id="email" type="email" required autocomplete="username"></div>
+      <div><label for="pw">Mật khẩu</label><input id="pw" type="password" required autocomplete="current-password"></div>
+      <button class="btn btn-primary" type="submit">Đăng nhập</button>
+    </form>
+    <p style="text-align:right;margin:10px 0 0"><a href="forgot-password.html">Quên mật khẩu?</a></p>
+    <p style="text-align:center;margin-top:18px"><a href="../index.html">← Về trang chủ</a></p>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script>
+(async function () {
+  const msg = document.getElementById("msg");
+  if (qs("reset")) msg.innerHTML = `<div class="notice" style="color:var(--cyan);background:rgba(62,230,223,.12)">Đã đổi mật khẩu. Hãy đăng nhập bằng mật khẩu mới.</div>`;
+  if (qs("denied")) msg.innerHTML = `<div class="notice">Tài khoản này không có quyền admin.</div>`;
+  if (!sb) { msg.innerHTML = `<div class="notice">Chưa cấu hình Supabase.</div>`; return; }
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    const { data: ok } = await sb.rpc("is_admin");
+    if (ok) { location.href = "dashboard.html"; return; }
+  }
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button"); btn.disabled = true;
+    const { error } = await sb.auth.signInWithPassword({ email: email.value.trim(), password: pw.value });
+    btn.disabled = false;
+    if (error) { msg.innerHTML = `<div class="notice">Sai email hoặc mật khẩu. <a href="forgot-password.html">Quên mật khẩu?</a></div>`; return; }
+    const { data: ok } = await sb.rpc("is_admin");
+    if (!ok) { await sb.auth.signOut(); msg.innerHTML = `<div class="notice">Tài khoản này không có quyền admin.</div>`; return; }
+    location.href = "dashboard.html";
+  });
+})();
+</script>
+</body>
+</html>

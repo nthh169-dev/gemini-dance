@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Quản lý đơn hàng – Gemini Dance Admin</title>
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-root="../" data-no-track>
+<div class="admin-layout">
+  <aside class="admin-side" id="admin-side"></aside>
+  <main class="admin-main">
+    <div class="admin-top">
+      <h1>Quản lý đơn hàng</h1>
+      <div class="filters">
+        <input id="q" type="search" placeholder="Tìm mã đơn, tên, SĐT…">
+        <select id="f-status"><option value="">Tất cả trạng thái</option></select>
+      </div>
+    </div>
+    <div class="table-wrap"><table class="data-table" id="tbl"></table></div>
+  </main>
+</div>
+
+<dialog id="dlg"><div id="dlg-body"></div><form method="dialog" style="margin-top:16px"><button class="btn btn-ghost">Đóng</button></form></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script>
+(async function () {
+  await requireAdmin();
+  let rows = [];
+  document.getElementById("f-status").innerHTML += Object.entries(STATUS_ORDER).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+
+  async function load() {
+    const { data, error } = await sb.from("orders").select("*, order_items(*)").order("created_at", { ascending: false });
+    if (error) return toast(error.message, "err");
+    rows = data; render();
+  }
+  function render() {
+    const q = document.getElementById("q").value.toLowerCase(), fs = document.getElementById("f-status").value;
+    const list = rows.filter((o) => (!fs || o.status === fs) && (!q || [o.code, o.customer_name, o.phone].join(" ").toLowerCase().includes(q)));
+    document.getElementById("tbl").innerHTML = `<tr><th>Mã đơn</th><th>Khách hàng</th><th>SĐT</th><th>Địa chỉ</th><th>Số SP</th><th>Tổng</th><th>Trạng thái</th><th>Ngày đặt</th><th></th></tr>` +
+      (list.map((o) => `<tr><td><b>${esc(o.code)}</b></td><td>${esc(o.customer_name)}</td><td>${esc(o.phone)}</td><td class="wrap">${esc(o.address)}</td>
+        <td>${o.order_items.reduce((s, i) => s + i.qty, 0)}</td><td>${vnd(o.total)}</td>
+        <td>${statusSelect(STATUS_ORDER, o.status, `data-status="${o.id}"`)}</td><td>${fmtDate(o.created_at)}</td>
+        <td class="row-actions"><button class="btn btn-ghost btn-sm" data-view="${o.id}">Chi tiết</button><button class="btn btn-danger btn-sm" data-del="${o.id}">Xoá</button></td></tr>`).join("")
+        || `<tr><td colspan="9" class="muted">Chưa có đơn hàng.</td></tr>`);
+  }
+  ["q", "f-status"].forEach((id) => document.getElementById(id).addEventListener("input", render));
+  const tbl = document.getElementById("tbl");
+  tbl.addEventListener("change", async (e) => {
+    const id = e.target.dataset.status; if (!id) return;
+    const { error } = await sb.from("orders").update({ status: e.target.value }).eq("id", id);
+    if (error) toast(error.message, "err"); else { toast("Đã cập nhật trạng thái đơn"); rows.find((o) => o.id == id).status = e.target.value; }
+  });
+  tbl.addEventListener("click", async (e) => {
+    if (e.target.dataset.del) {
+      if (!confirm("Xoá đơn hàng này?")) return;
+      const { error } = await sb.from("orders").delete().eq("id", e.target.dataset.del);
+      if (error) toast(error.message, "err"); else { toast("Đã xoá đơn"); load(); }
+    }
+    if (e.target.dataset.view) {
+      const o = rows.find((x) => x.id == e.target.dataset.view);
+      document.getElementById("dlg-body").innerHTML = `
+        <h3>Đơn ${esc(o.code)}</h3>
+        <p>${esc(o.customer_name)} · ${esc(o.phone)} ${o.email ? "· " + esc(o.email) : ""}<br>${esc(o.address)}</p>
+        ${o.note ? `<p class="muted">Ghi chú: ${esc(o.note)}</p>` : ""}
+        <table class="data-table"><tr><th>Sản phẩm</th><th>Size</th><th>Màu</th><th>SL</th><th>Thành tiền</th></tr>
+        ${o.order_items.map((i) => `<tr><td>${esc(i.product_name)}</td><td>${esc(i.size || "")}</td><td>${esc(i.color || "")}</td><td>${i.qty}</td><td>${vnd(i.qty * i.unit_price)}</td></tr>`).join("")}
+        <tr><td colspan="4"><b>Tổng</b></td><td><b>${vnd(o.total)}</b></td></tr></table>`;
+      document.getElementById("dlg").showModal();
+    }
+  });
+  load();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Thông tin bí mật – KHÔNG đưa lên GitHub
+supabase.txt
+*.env
+.env*
+
+# macOS
+.DS_Store

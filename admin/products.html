@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Quản lý sản phẩm – Gemini Dance Admin</title>
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="../assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body data-root="../" data-no-track>
+<div class="admin-layout">
+  <aside class="admin-side" id="admin-side"></aside>
+  <main class="admin-main">
+    <div class="admin-top">
+      <h1>Quản lý sản phẩm</h1>
+      <div class="filters">
+        <input id="q" type="search" placeholder="Tìm sản phẩm…">
+        <button class="btn btn-primary" id="add">+ Thêm sản phẩm</button>
+      </div>
+    </div>
+    <div class="table-wrap"><table class="data-table" id="tbl"></table></div>
+  </main>
+</div>
+
+<dialog id="dlg">
+  <form id="edit" method="dialog" class="form-grid">
+    <h3 class="full" id="dlg-title">Sản phẩm</h3>
+    <div class="full"><label>Tên sản phẩm</label><input name="name" required></div>
+    <div><label>Danh mục</label><select name="category"><option value="trang-phuc">Trang phục</option><option value="giay">Giày nhảy</option><option value="phu-kien">Phụ kiện</option></select></div>
+    <div><label>Nhãn</label><select name="badge"><option value="">(Không)</option><option>New</option><option>Hot</option><option>Sale</option></select></div>
+    <div><label>Giá (VNĐ)</label><input name="price" type="number" min="0" step="1000" required></div>
+    <div><label>Giá sale (để trống nếu không)</label><input name="sale_price" type="number" min="0" step="1000"></div>
+    <div><label>Size (cách nhau dấu phẩy)</label><input name="sizes" placeholder="S, M, L"></div>
+    <div><label>Màu (cách nhau dấu phẩy)</label><input name="colors" placeholder="Đen, Hồng"></div>
+    <div><label>Tồn kho</label><input name="stock" type="number" min="0" required></div>
+    <div><label>Hiển thị</label><select name="is_active"><option value="true">Có</option><option value="false">Ẩn</option></select></div>
+    <div class="full"><label>Link ảnh (tuỳ chọn, VD: assets/img/products/bodysuit.jpg)</label><input name="image_url"></div>
+    <div class="full"><label>Mô tả</label><textarea name="description"></textarea></div>
+    <div class="full" style="display:flex;gap:10px"><button class="btn btn-primary" value="save">Lưu</button><button class="btn btn-ghost" value="cancel" formnovalidate>Đóng</button></div>
+  </form>
+</dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/app.js"></script>
+<script src="../assets/js/admin.js"></script>
+<script>
+(async function () {
+  await requireAdmin();
+  let rows = [];
+  const dlg = document.getElementById("dlg"), form = document.getElementById("edit");
+  const TEXT = ["name", "category", "badge", "price", "sale_price", "stock", "image_url", "description"];
+  const list = (s) => s.split(",").map((x) => x.trim()).filter(Boolean);
+
+  async function load() {
+    const { data, error } = await sb.from("products").select("*").order("id");
+    if (error) return toast(error.message, "err");
+    rows = data; render();
+  }
+  function render() {
+    const q = document.getElementById("q").value.toLowerCase();
+    document.getElementById("tbl").innerHTML = `<tr><th></th><th>Tên</th><th>Danh mục</th><th>Giá</th><th>Size</th><th>Màu</th><th>Tồn</th><th>Hiển thị</th><th></th></tr>` +
+      rows.filter((p) => !q || p.name.toLowerCase().includes(q)).map((p) => `<tr>
+        <td style="width:56px"><div style="width:44px;border-radius:8px;overflow:hidden">${productImage({ ...p, image_url: p.image_url && !/^https?:/.test(p.image_url) ? "../" + p.image_url : p.image_url })}</div></td>
+        <td><b>${esc(p.name)}</b> ${p.badge ? `<span class="status status-new">${p.badge}</span>` : ""}</td><td>${esc(CATEGORY[p.category])}</td>
+        <td>${priceHtml(p)}</td><td>${esc((p.sizes || []).join(", "))}</td><td>${esc((p.colors || []).join(", "))}</td>
+        <td style="color:${p.stock < 5 ? "var(--pink)" : "inherit"}">${p.stock}</td><td>${p.is_active ? "✅" : "—"}</td>
+        <td class="row-actions"><button class="btn btn-ghost btn-sm" data-edit="${p.id}">Sửa</button><button class="btn btn-danger btn-sm" data-del="${p.id}">Xoá</button></td></tr>`).join("");
+  }
+  function open(p) {
+    form.dataset.id = p ? p.id : "";
+    document.getElementById("dlg-title").textContent = p ? "Sửa sản phẩm" : "Thêm sản phẩm";
+    TEXT.forEach((k) => (form[k].value = p ? (p[k] ?? "") : ""));
+    form.sizes.value = p ? (p.sizes || []).join(", ") : "";
+    form.colors.value = p ? (p.colors || []).join(", ") : "";
+    form.is_active.value = p ? String(p.is_active) : "true";
+    if (!p) { form.category.value = "trang-phuc"; form.stock.value = 10; }
+    dlg.returnValue = ""; dlg.showModal();
+  }
+  document.getElementById("q").addEventListener("input", render);
+  document.getElementById("add").onclick = () => open(null);
+  document.getElementById("tbl").addEventListener("click", async (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.edit) open(rows.find((p) => p.id == b.dataset.edit));
+    if (b.dataset.del) {
+      if (!confirm("Xoá sản phẩm này?")) return;
+      const { error } = await sb.from("products").delete().eq("id", b.dataset.del);
+      if (error) toast(error.message, "err"); else { toast("Đã xoá sản phẩm"); load(); }
+    }
+  });
+  dlg.addEventListener("close", async () => {
+    if (dlg.returnValue !== "save") return;
+    const v = Object.fromEntries(TEXT.map((k) => [k, form[k].value.trim()]));
+    v.price = Number(v.price); v.stock = Number(v.stock);
+    v.sale_price = v.sale_price ? Number(v.sale_price) : null;
+    v.badge = v.badge || null; v.image_url = v.image_url || null;
+    v.sizes = list(form.sizes.value); v.colors = list(form.colors.value);
+    v.is_active = form.is_active.value === "true";
+    const id = form.dataset.id;
+    const { error } = id ? await sb.from("products").update(v).eq("id", id) : await sb.from("products").insert(v);
+    if (error) toast(error.message, "err"); else { toast(id ? "Đã cập nhật sản phẩm" : "Đã thêm sản phẩm"); load(); }
+  });
+  load();
+})();
+</script>
+</body>
+</html>

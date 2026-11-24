@@ -1,0 +1,12 @@
+# Những file KHÔNG đưa lên Cloudflare (chỉ dùng trong repo)
+.git
+.gitignore
+.nojekyll
+.assetsignore
+wrangler.jsonc
+node_modules
+*.md
+supabase/
+image/
+docs/
+supabase.txt

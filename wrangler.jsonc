@@ -1,0 +1,8 @@
+// Cấu hình để Cloudflare Workers phục vụ website tĩnh (không cần build).
+{
+  "name": "gemini-dance",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./"
+  }
+}

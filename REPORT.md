@@ -1,108 +1,201 @@
 # BÁO CÁO ĐỒ ÁN CUỐI KHOÁ – WEBSITE GEMINI DANCE
 
+> **REPORT.md** là báo cáo tổng hợp của đồ án: mô tả dự án, các trang, các chức năng, vai trò của các file `.md` và thứ tự các prompt đã làm việc với Claude Code.
+
 | | |
 |---|---|
-| Sinh viên | Nguyễn Hạnh |
-| Link GitHub | https://github.com/nthh169-dev/gemini-dance |
-| Link website | https://nthh169-dev.github.io/gemini-dance/ |
-| Ngày nộp | 29/11/2026 |
+| **Sinh viên** | Nguyễn Hạnh |
+| **Ngày nộp** | 29/11/2026 |
+| **Mã nguồn (GitHub)** | https://github.com/nthh169-dev/gemini-dance |
+| **Website (GitHub Pages)** | https://nthh169-dev.github.io/gemini-dance/ |
+| **Website (Cloudflare Workers)** | https://gemini-dance.nthh169.workers.dev |
+| **Công cụ AI** | Claude Code |
 
 ---
 
 ## 1. Mô tả dự án
 
-**Lĩnh vực:** giáo dục – năng khiếu (trung tâm dạy nhảy) kết hợp thương mại điện tử (bán trang phục nhảy).
+### 1.1 Lĩnh vực
+Website cho một **trung tâm dạy nhảy** (Sexy Dance, Heels, K-pop dành cho nữ từ 18 tuổi), kết hợp **cửa hàng online** bán trang phục, giày và phụ kiện nhảy. Website vừa giới thiệu thương hiệu, vừa cho học viên đăng ký khoá học, vừa bán hàng, và có khu quản trị riêng cho admin.
 
-**Thương hiệu:** **Gemini Dance** – thương hiệu **hư cấu**, lấy cảm hứng từ chòm sao **Song Tử (Gemini)**. Thông điệp: *"Như Song Tử, hãy để âm nhạc và vũ đạo đánh thức một 'mặt khác' rạng rỡ, bản lĩnh hơn trong bạn."* Đối tượng: nữ từ 18 tuổi, yêu thích Sexy Dance, Heels, K-pop.
+### 1.2 Thương hiệu
+- **Tên:** Gemini Dance (Song Tử) – thương hiệu hư cấu dùng cho đồ án.
+- **Ý nghĩa:** Song Tử là hai nửa song hành, tượng trưng cho hai mặt của người phụ nữ khi nhảy: dịu dàng và mạnh mẽ, tự tin và quyến rũ.
+- **Phong cách:** trẻ trung, trendy, năng lượng sân khấu. Nền đêm sâu, chòm sao Song Tử màu vàng nhạt, ánh đèn bokeh (lấy cảm hứng từ poster gốc).
+- **Màu chủ đạo:** gradient neon **cyan `#3EE6DF` → tím `#8A7CF0` → hồng `#E8439A`** trên nền tối `#07060D`, điểm nhấn vàng `#E8C27A`.
+- **Font:** chỉ dùng **Be Vietnam Pro** (Google Fonts) để hiển thị đủ dấu tiếng Việt và đồng đều trên mọi trang.
+- **Địa chỉ:** 188/5/1 Nguyễn Suý (hư cấu). **Liên hệ:** 0900000000 · geminidance@example.com.vn. Có link TikTok, Facebook, YouTube.
 
-**Địa chỉ:** 188/5/1 Nguyễn Suý, Q. Tân Phú, Tp.HCM · TikTok `@gemini.dance169` · Facebook `gemini.dance169` · YouTube `@GeminiDance`.
+### 1.3 Logo
+Bộ logo gốc nằm trong `image/gemini-dance-logo-pack/`, được copy sang `assets/img/` và dùng nguyên bản (không vẽ lại):
 
-**Logo:** vì là thương hiệu hư cấu, logo được tạo **trước** (bộ `image/gemini-dance-logo-pack/`) và dùng **thống nhất** ở header, footer, favicon, trang About và trang admin.
+| File | Nội dung | Dùng ở |
+|---|---|---|
+| `logo-lockup.svg` | Biểu tượng ♊ + chữ "Gemini Dance" | Header mọi trang và trang admin |
+| `logo-mark.svg` | Chỉ biểu tượng Song Tử | Hero, phần Về chúng tôi, footer |
+| `logo-icon.svg` | Icon vuông | Favicon |
 
-<p><img src="assets/img/logo-lockup.svg" alt="Logo Gemini Dance" width="420"></p>
+Biểu tượng là hai nét cong đối xứng tạo thành chữ ♊ (Song Tử), tô gradient neon cyan → tím → hồng như ánh đèn sân khấu.
 
-- Biểu tượng cách điệu từ ký hiệu ♊ Song Tử: hai đường cong như hai cánh tay đang múa, bên trái là dáng một vũ công.
-- Gradient **cyan → tím → hồng**: hành trình từ người mới (Beginner) tới tự tin toả sáng (Advanced).
+### 1.4 Khoá học
+| Khoá | Lịch | Thời lượng | Học phí | Sĩ số |
+|---|---|---|---|---|
+| **Beginner – Lớp Căn Bản** | Chủ nhật 12:00 – 14:00 | 8 tuần | 1.200.000đ | 20 |
+| **Advanced – Lớp Nâng Cao** | Thứ 7 & Chủ nhật 14:00 – 15:00 | 8 tuần | 1.500.000đ | 15 |
 
-**Công nghệ:** HTML, CSS, JavaScript thuần; database **Supabase** (PostgreSQL + Auth + Row Level Security); Chart.js; deploy **GitHub Pages**.
+Admin có thể thêm khoá mới (hoặc copy khoá cũ), nên danh sách trên web luôn lấy từ database.
+
+### 1.5 Công nghệ
+| Thành phần | Lựa chọn | Lý do |
+|---|---|---|
+| Giao diện | HTML + CSS + JavaScript thuần | Không cần build, deploy thẳng lên GitHub Pages |
+| Database + đăng nhập | **Supabase** (PostgreSQL, Auth, RLS, hàm RPC) | GitHub Pages là web tĩnh, không ghi được file; Supabase miễn phí và bảo mật bằng RLS |
+| Biểu đồ | Chart.js 4.4.1 | Dashboard admin |
+| Video, bản đồ | YouTube embed, Google Maps embed | Trang chủ |
+| Hosting | **GitHub Pages** và **Cloudflare Workers** (tự build khi push lên GitHub) | Miễn phí, có HTTPS |
+
+---
 
 ## 2. Các trang trong dự án
 
-| # | Trang | File | Nội dung |
-|---|---|---|---|
-| 1 | **Trang chủ** | `index.html` | Banner logo + slogan, 2 thẻ khoá học (lấy từ DB), **video YouTube nhúng**, lý do chọn Gemini, sản phẩm nổi bật, **Google Map nhúng**, link TikTok / Facebook / YouTube |
-| 2 | **Về chúng tôi** | `index.html#ve-chung-toi` | Gộp vào Trang chủ: câu chuyện Song Tử, ý nghĩa logo, giá trị cốt lõi, đội ngũ giáo viên (`about.html` tự chuyển về đây) |
-| 3 | **Chi tiết khoá học** | `course.html?slug=beginner` / `advanced` | Lịch học, học phí, thời lượng, số chỗ còn trống (tính từ DB), nội dung học, nút đăng ký |
-| 4 | **Đăng ký khoá học** | `register.html` | Đăng ký mới · Tra cứu · Sửa · Huỷ |
-| 5 | **Gemini Shop** | `shop.html` | Danh sách sản phẩm, lọc danh mục, tìm kiếm, sắp xếp giá |
-| 6 | **Chi tiết sản phẩm** | `product.html?id=…` | Giá, size, màu, số lượng, tồn kho, thêm vào giỏ, sản phẩm liên quan |
-| 7 | **Giỏ hàng** | `cart.html` | Sửa số lượng, xoá món, đặt hàng, tra cứu đơn |
-| 8 | Admin – Đăng nhập | `admin/login.html` | Supabase Auth, chỉ tài khoản trong bảng `admins` |
-| 8b | Admin – Quên mật khẩu | `admin/forgot-password.html` | Gửi link đặt lại mật khẩu qua email |
-| 8c | Admin – Đặt mật khẩu mới | `admin/reset-password.html` | Đặt mật khẩu mới từ link email, hoặc đổi mật khẩu khi đang đăng nhập |
-| 9 | Admin – Dashboard | `admin/dashboard.html` | Số đăng ký (theo khoá), lượt truy cập, đơn hàng, doanh thu, biểu đồ theo ngày, trang xem nhiều, SP bán chạy |
-| 10 | Admin – Đăng ký | `admin/registrations.html` | Tìm kiếm, lọc, đổi trạng thái, sửa, xoá |
-| 11 | Admin – Khoá học | `admin/courses.html` | Thêm, sửa, xoá khoá học |
-| 12 | Admin – Sản phẩm | `admin/products.html` | Thêm, sửa, xoá sản phẩm |
-| 13 | Admin – Đơn hàng | `admin/orders.html` | Xem chi tiết, đổi trạng thái, xoá |
+Menu chính: **Trang chủ · Khoá học · Đăng ký · Gemini Shop · Giỏ hàng**. Header và footer dùng chung, do `assets/js/app.js` tạo ra.
 
-**Liên kết giữa các trang:** mọi trang công khai dùng chung một **menu** (Trang chủ · Về chúng tôi · Khoá học · Đăng ký · Gemini Shop · Giỏ hàng) và **footer** (link tới từng khoá, đăng ký, shop, admin). Trang admin có sidebar riêng và link quay về website.
+### 2.1 Trang công khai
+| Trang | File | Nội dung |
+|---|---|---|
+| **Trang chủ** | `index.html` | Banner hero + nút đăng ký; video YouTube dạng trượt (carousel); "Vì sao chọn Gemini Dance"; sản phẩm nổi bật của Shop; liên hệ + bản đồ Google Maps + mạng xã hội |
+| **Về chúng tôi** | `index.html#ve-chung-toi` | Nằm ngay trong Trang chủ: câu chuyện Song Tử, ý nghĩa logo, giá trị cốt lõi, đội ngũ giảng viên. `about.html` giữ lại chỉ để chuyển hướng link cũ về đây |
+| **Khoá học** | `courses.html` | Danh sách mọi khoá học từ database, lọc theo cấp độ |
+| **Chi tiết khoá học** | `course.html?slug=…` | Mô tả, lịch học, học phí, nội dung học, số chỗ còn lại, nút đăng ký |
+| **Đăng ký khoá học** | `register.html` | Form đăng ký; tra cứu đăng ký bằng SĐT + email; sửa hoặc huỷ đăng ký |
+| **Gemini Shop** | `shop.html` | Lưới sản phẩm, lọc theo danh mục, sắp xếp theo giá |
+| **Chi tiết sản phẩm** | `product.html?id=…` | Ảnh theo màu, chọn size/màu/số lượng, thêm vào giỏ |
+| **Giỏ hàng & đặt hàng** | `cart.html` | Sửa số lượng, xoá món, nhập thông tin giao hàng, đặt hàng, tra cứu đơn |
 
-*(Chèn ảnh chụp màn hình từng trang vào `docs/screenshots/` và thêm vào đây.)*
+### 2.2 Trang admin (thư mục `admin/`, chỉ có link nhỏ ở footer)
+| Trang | File | Nội dung |
+|---|---|---|
+| Đăng nhập | `login.html` | Email + mật khẩu (Supabase Auth), chỉ tài khoản trong bảng `admins` mới vào được |
+| Quên mật khẩu | `forgot-password.html` | Gửi email chứa link đặt lại mật khẩu |
+| Đặt lại mật khẩu | `reset-password.html` | Nhập mật khẩu mới từ link trong email |
+| Dashboard | `dashboard.html` | Thẻ thống kê (đăng ký, lượt truy cập, đơn hàng, doanh thu học phí, doanh thu Shop) và biểu đồ |
+| Quản lý đăng ký | `registrations.html` | Xem, lọc, đổi trạng thái, sửa, huỷ; cột "Huỷ bởi" |
+| Quản lý khoá học | `courses.html` | Thêm, sửa, xoá, **copy** khoá học |
+| Quản lý sản phẩm | `products.html` | Thêm, sửa, xoá, ẩn sản phẩm; ảnh theo màu |
+| Quản lý đơn hàng | `orders.html` | Xem chi tiết đơn, đổi trạng thái |
+
+---
 
 ## 3. Các chức năng đã thực hiện
 
-**Database Supabase – 7 bảng:** `courses`, `registrations`, `page_views`, `products`, `orders`, `order_items`, `admins` (xem `supabase/schema.sql`).
+### 3.1 Khách / học viên
+1. **Xem thông tin**: Trang chủ có video, bản đồ, mạng xã hội; phần Về chúng tôi; danh sách và chi tiết khoá học (dữ liệu từ database).
+2. **Đăng ký khoá học** (INSERT): chọn **Cấp độ** và **Lịch học** ở 2 ô riêng, nhập họ tên, SĐT, email, năm sinh, ghi chú.
+3. **Kiểm tra dữ liệu** ở cả giao diện lẫn database:
+   - Chỉ nhận học viên **từ 18 tuổi** (ô năm sinh có nút mở bảng chọn năm, hoặc gõ trực tiếp).
+   - SĐT Việt Nam 10 số (03/05/07/08/09, chấp nhận +84, dấu cách, dấu chấm).
+   - Email đúng định dạng.
+   - Không đăng ký trùng; không đăng ký khi khoá đã hết chỗ.
+4. **Tra cứu đăng ký** (SELECT) bằng SĐT + email.
+5. **Sửa đăng ký** (UPDATE) khi còn "Chờ xác nhận".
+6. **Huỷ đăng ký**: chỉ huỷ được khi còn "Chờ xác nhận". Khi huỷ, bản ghi **không bị xoá** mà chuyển sang "Đã huỷ" và ghi lại người huỷ (học viên/admin) cùng thời gian. Đăng ký đã được admin xác nhận thì bị khoá, chỉ xem được.
+7. **Mua hàng**: lọc, sắp xếp sản phẩm; đổi màu thì ảnh đổi theo; giỏ hàng lưu trong trình duyệt; đặt hàng (giá tính lại ở database, không tin giá gửi từ trình duyệt); tra cứu đơn hàng.
+8. **Video YouTube dạng trượt**: hiển thị nhiều video, vuốt hoặc bấm mũi tên để chuyển; xem ngay trên web cả trên điện thoại và tablet.
+9. **Đếm lượt truy cập**: mỗi lần mở trang được ghi vào bảng `page_views`.
+10. **Chạy được khi chưa có database**: nếu Supabase chưa sẵn sàng, trang công khai hiển thị dữ liệu mẫu.
 
-| # | Chức năng | Thao tác DB |
-|---|---|---|
-| 1 | Hiển thị khoá học, số chỗ còn trống | SELECT `courses`, RPC `course_seats` |
-| 2 | **Đăng ký khoá học** → nhận mã đăng ký | **INSERT** `registrations` |
-| 3 | Tra cứu đăng ký bằng mã + SĐT | SELECT (RPC `find_registration`) |
-| 4 | **Sửa đăng ký** (đổi tên, email, đổi lớp, ghi chú) | **UPDATE** `registrations` |
-| 5 | **Huỷ đăng ký** | **DELETE** `registrations` |
-| 6 | Ghi lượt truy cập mỗi lần mở trang | INSERT `page_views` |
-| 7 | Danh sách + chi tiết sản phẩm, lọc, tìm kiếm, sắp xếp | SELECT `products` |
-| 8 | Giỏ hàng: thêm / đổi số lượng / xoá (lưu trên trình duyệt) | localStorage |
-| 9 | **Đặt hàng** – lưu đơn, trừ tồn kho | **INSERT** `orders`, `order_items`; **UPDATE** `products.stock` |
-| 10 | Tra cứu đơn hàng | SELECT (RPC `find_order`) |
-| 11 | Đăng nhập / đăng xuất admin | Supabase Auth |
-| 11b | **Quên mật khẩu admin**: gửi email chứa link, đặt mật khẩu mới; đổi mật khẩu từ sidebar | Supabase Auth (UPDATE mật khẩu) |
-| 12 | Dashboard thống kê + biểu đồ | SELECT nhiều bảng |
-| 13 | Admin quản lý đăng ký | UPDATE, DELETE |
-| 14 | Admin quản lý khoá học | INSERT, UPDATE, DELETE |
-| 15 | Admin quản lý sản phẩm | INSERT, UPDATE, DELETE |
-| 16 | Admin quản lý đơn hàng | UPDATE, DELETE |
-| 17 | Nhúng **YouTube** (kênh @GeminiDance) và **Google Map** | – |
-| 18 | Giao diện responsive (máy tính + điện thoại) | – |
+### 3.2 Admin
+1. Đăng nhập, đăng xuất, quên và đặt lại mật khẩu.
+2. **Dashboard**:
+   - Tổng đăng ký, lượt truy cập, đơn hàng.
+   - **Doanh thu học phí**: chỉ cộng các đăng ký đã xác nhận, kèm số tiền đang chờ xác nhận.
+   - Doanh thu Shop.
+   - Biểu đồ đăng ký theo khoá, lượt truy cập theo ngày.
+3. **Quản lý đăng ký**: lọc theo khoá và trạng thái, đổi trạng thái, sửa, huỷ, xem cột "Huỷ bởi".
+4. **Quản lý khoá học**: thêm, sửa, xoá, **nút Copy** để tạo khoá mới nhanh.
+5. **Quản lý sản phẩm**: CRUD, ẩn/hiện, ảnh theo từng màu (đường dẫn có `{mau}`).
+6. **Quản lý đơn hàng**: xem chi tiết, đổi trạng thái (Mới → Đang giao → Hoàn thành, hoặc Đã huỷ).
+7. **Badge trên sidebar**: số đăng ký và đơn hàng mới hiện trên menu "Đăng ký" và "Đơn hàng", tự cập nhật mỗi 30 giây, mất đi khi admin mở trang.
 
-**Bảo mật:** bật Row Level Security trên mọi bảng. Khách chỉ thao tác dữ liệu của mình qua hàm RPC (phải đúng mã + SĐT); chỉ admin mới đọc / sửa / xoá toàn bộ. Frontend chỉ chứa publishable key; mật khẩu database nằm trong `supabase.txt` đã bị `.gitignore` chặn.
+### 3.3 Bảo mật
+- **Row Level Security** trên mọi bảng: khách chỉ đọc được khoá học và sản phẩm. Khách không đọc được đăng ký hay đơn hàng của người khác; chỉ thao tác qua hàm RPC.
+- Các hàm RPC trong `supabase/schema.sql`:
+  - Đăng ký: `register_course`, `find_registration`, `update_registration`, `cancel_registration`, `course_seats`.
+  - Đơn hàng: `place_order`, `find_order`.
+  - Admin: `is_admin`.
+- Mọi dữ liệu người dùng chèn vào HTML đều qua hàm `esc()` để chống XSS.
+- Chỉ đặt publishable key trên web. `supabase.txt` (mật khẩu database) nằm trong `.gitignore`, không bao giờ lên GitHub.
+
+---
 
 ## 4. Các file .md và chức năng
 
 | File | Chức năng |
 |---|---|
-| `PRD.md` | **Product Requirements Document** – mô tả *website cần làm gì*: mục tiêu, người dùng, danh sách trang, chức năng, cấu trúc dữ liệu, đối chiếu tiêu chí chấm điểm. Là "đề bài chi tiết" để Claude code đúng yêu cầu. |
-| `DESIGN.md` | Mô tả *website trông như thế nào*: logo, bảng màu neon lấy từ poster, font, thành phần giao diện, bố cục từng trang, phong cách Shop. Giúp mọi trang thống nhất nhận diện thương hiệu. |
-| `CLAUDE.md` | File Claude Code tự đọc khi mở dự án: công nghệ, cấu trúc thư mục, quy tắc code, quy tắc bảo mật (không commit mật khẩu). |
-| `README.md` | Giới thiệu repo trên GitHub, cách cài database, chạy thử và deploy. |
-| `PROMPTS.md` | Nhật ký thứ tự các prompt và kết quả từng prompt. |
-| `REPORT.md` | Báo cáo đồ án này. |
+| **PRD.md** | *Product Requirements Document* – tài liệu **yêu cầu sản phẩm**: website làm cho ai, mục tiêu, danh sách trang, chức năng từng trang, thao tác database (thêm/sửa/xoá/tra cứu), cấu trúc dữ liệu, đối chiếu tiêu chí chấm điểm và những gì nằm ngoài phạm vi. Trả lời câu hỏi **"web phải làm được gì?"**. Claude đọc file này trước khi viết code để làm đúng và đủ chức năng. |
+| **DESIGN.md** | Tài liệu **thiết kế giao diện**: cảm hứng từ poster, cách dùng logo, bảng màu (biến CSS), font, bố cục từng trang, nút, thẻ, form, responsive. Trả lời câu hỏi **"web trông như thế nào?"**. Claude dựa vào đây để mọi trang cùng một phong cách, đúng nhận diện thương hiệu. |
+| **CLAUDE.md** | File **hướng dẫn cho Claude Code**, được Claude tự đọc mỗi khi mở dự án: công nghệ, cấu trúc thư mục, quy tắc code (header/footer dùng chung, không hard-code màu, dùng `esc()`, khách chỉ gọi RPC…), lưu ý bảo mật, cách chạy thử. Giúp Claude làm đúng ngay mà không phải hỏi lại. |
+| **README.md** | Hướng dẫn cho **người dùng/giảng viên**: giới thiệu dự án, link website, cách tạo database Supabase, chạy các file migration, cấu hình đăng nhập admin, chạy thử ở máy, deploy GitHub Pages và Cloudflare. |
+| **PROMPTS.md** | **Nhật ký prompt**: ghi lần lượt từng prompt đã gửi cho Claude và kết quả của prompt đó (Prompt 1 → 33). |
+| **REPORT.md** | **Báo cáo tổng hợp** (file này). |
+
+Các file SQL trong `supabase/`:
+
+| File | Nội dung |
+|---|---|
+| `schema.sql` | Tạo toàn bộ bảng, RLS, hàm RPC và dữ liệu mẫu (dùng cho database mới) |
+| `migration-002-birth-date.sql` | Thêm cột ngày sinh |
+| `migration-003-validate.sql` | Kiểm tra 18 tuổi, SĐT, email ở database |
+| `migration-004-product-images.sql` | Ảnh sản phẩm theo màu (6 sản phẩm đầu) |
+| `migration-005-cancel-rules.sql` | Quy tắc huỷ đăng ký, cột "Huỷ bởi" (đã gộp sẵn nội dung 003) |
+| `migration-006-more-product-images.sql` | Ảnh cho 6 sản phẩm còn lại |
+| `reset-admin-password.sql` | Hỗ trợ đặt lại mật khẩu admin |
+
+---
 
 ## 5. Thứ tự các prompt và kết quả
 
-Chi tiết đầy đủ trong [PROMPTS.md](PROMPTS.md). Tóm tắt:
+Toàn văn từng prompt và kết quả chi tiết nằm trong [`PROMPTS.md`](PROMPTS.md). Tóm tắt theo thứ tự:
 
-| # | Prompt | Kết quả |
+| # | Prompt (yêu cầu) | Kết quả |
 |---|---|---|
-| 1 | Dán đề bài + poster, nhờ lập kế hoạch các bước (Home có YouTube, map, social; chi tiết 2 khoá; module đăng ký) | Kế hoạch 7 bước, chọn HTML/CSS/JS + Supabase, lịch làm 24 → 29/11 |
-| 2 | Thêm module login chỉ dành cho admin, có dashboard (số người đăng ký, người vào trang…) | Bổ sung Supabase Auth + RLS, bảng `page_views`, dashboard biểu đồ, quản lý đăng ký / khoá học |
-| 3 | Thêm trang Gemini Shop bán trang phục, giày nhảy, phong cách trẻ trung cho nữ 18+ | Bổ sung shop, chi tiết SP, giỏ hàng, đơn hàng, admin sản phẩm / đơn hàng |
-| 4 | Tạo file .md và code website vào thư mục `website_dance`, ghi lại mô tả theo đề bài | Tạo đủ file .md, schema Supabase, 13 trang web, kiểm tra trên desktop & mobile |
-| 5 | Làm thêm module quên password cho admin (vì đã quên mật khẩu đặt trên Supabase) | Thêm trang Quên mật khẩu + Đặt mật khẩu mới, link ở trang đăng nhập, mục Đổi mật khẩu ở sidebar admin |
-| 6 | Kết nối database Supabase sau khi đã tạo bảng và thêm admin | Kiểm tra kết nối thật: đọc dữ liệu OK, RLS chặn khách đúng, thử insert/update/delete qua RPC thành công |
-| 7 | Hỏi nguyên nhân lỗi 127.0.0.1 khi đặt lại mật khẩu | Giải thích Site URL / Redirect URLs của Supabase và cách cấu hình |
-| 8 | Deploy lên GitHub Pages | Push code lên repo Public, bật Pages, kiểm tra web online chạy với database thật |
+| 1 | Đưa đề bài + poster, nhờ lập kế hoạch: Homepage có video YouTube, bản đồ, mạng xã hội; chi tiết 2 khoá học; module đăng ký | Kế hoạch 7 bước, chọn HTML/CSS/JS + Supabase vì GitHub Pages không ghi được dữ liệu |
+| 2 | Thêm module login chỉ cho admin, có dashboard | Bổ sung đăng nhập admin (Supabase Auth + RLS), dashboard, bảng `page_views`, trang quản lý đăng ký và khoá học |
+| 3 | Thêm trang Gemini Shop bán trang phục, giày nhảy cho nữ trên 18 tuổi | Bổ sung shop, chi tiết sản phẩm, giỏ hàng, bảng `products`/`orders`/`order_items`, trang admin sản phẩm và đơn hàng |
+| 4 | Tạo các file .md và code website trong thư mục `website_dance` | Tạo PRD, DESIGN, CLAUDE, README, PROMPTS, REPORT; `schema.sql` (7 bảng, RLS, RPC, dữ liệu mẫu); 7 trang công khai + 6 trang admin; chặn `supabase.txt` |
+| 5 | Làm module quên mật khẩu admin | Thêm trang quên mật khẩu và đặt lại mật khẩu, link "Quên mật khẩu?", mục đổi mật khẩu |
+| 6 | Kết nối database Supabase | Cấu hình URL + publishable key; kiểm tra thật: đọc khoá học/sản phẩm, RLS chặn khách, đăng ký–tra cứu–sửa–huỷ đều chạy |
+| 7 | Lỗi 127.0.0.1 khi đặt lại mật khẩu | Giải thích do Site URL/Redirect URLs của Supabase, hướng dẫn cấu hình lại |
+| 8 | Deploy lên GitHub Pages | Push code lên repo `nthh169-dev/gemini-dance`, website chạy tại GitHub Pages |
+| 9 | Quên mật khẩu luôn báo "đợi 1 phút" | Phân biệt lỗi giới hạn email của Supabase, hiện thông báo đúng nguyên nhân |
+| 10 | Ô năm sinh sai component, không có lịch, có icon hình người | Đổi sang ô chọn ngày, ẩn icon Safari, thêm cột `birth_date` (migration-002) |
+| 11 | Chỉ cần điền năm sinh, chặn dưới 18 tuổi, kiểm tra email và SĐT | Danh sách năm sinh, kiểm tra 18+, SĐT, email ở giao diện và database (migration-003) |
+| 12 | Ô năm sinh cần nút mở popup chọn năm, vẫn gõ trực tiếp được | Ô nhập 4 chữ số + nút lịch mở bảng 12 năm, chuyển trang ‹ › |
+| 13 | Ô Khoá học cao bằng ô Năm sinh, đổi placeholder Ghi chú | Mọi ô cao 52px, placeholder "Bạn đã từng học nhảy chưa? Muốn học thể loại nào" |
+| 14 | Bỏ 2 dòng lịch Beginner/Advanced trong thẻ liên hệ | Thẻ liên hệ chỉ còn địa chỉ và mạng xã hội |
+| 15 | Font chữ lớn nhỏ không đều, sửa cho thống nhất | Chỉ dùng Be Vietnam Pro, thống nhất cỡ chữ tiêu đề và nội dung |
+| 16 | Chữ "Gemini Dance" trong logo nhỏ hơn chữ thường | Phóng to logo ở header và footer |
+| 17 | Thêm nút Copy ở mỗi dòng khoá học trong admin | Nút Copy mở form với dữ liệu khoá cũ và mã khoá mới không trùng |
+| 18 | Video YouTube báo "unavailable" trên Android | Đổi playlist embed sang nhúng từng video |
+| 19 | Bỏ lịch học ở cuối Trang chủ và phần "Chọn lớp phù hợp"; nút "Xem lịch học" chuyển sang trang Khoá học | Tạo trang `courses.html` lấy từ database, gọn Trang chủ và footer |
+| 20 | Bỏ phần lịch khai giảng ở trang Giới thiệu | Bỏ thông tin lớp, ngày giờ ở trang Giới thiệu |
+| 21 | Gộp "Trang chủ" và "Về chúng tôi" thành 1 trang | Chọn gộp hẳn: nội dung Về chúng tôi vào Trang chủ, `about.html` chỉ còn chuyển hướng |
+| 22 | Cập nhật ảnh sản phẩm theo tên và màu từ thư mục Shop | Ảnh riêng cho từng màu, đổi màu thì đổi ảnh (migration-004) |
+| 23 | Badge số đăng ký/đơn hàng mới trên sidebar admin, mất khi đã xem | Badge trên menu Đăng ký và Đơn hàng, cập nhật mỗi 30 giây |
+| 24 | Mua hàng nhưng badge Đơn hàng không hiện | Sửa cách đếm lần đầu: đếm bản ghi chưa xử lý |
+| 25 | Sửa form đăng ký: placeholder "Nguyễn Thị A", "2008", tách Khoá học thành Cấp độ và Thời gian | Placeholder mới, 2 ô Cấp độ và Lịch học riêng |
+| 26 | Dashboard hiện doanh thu học phí, chỉ tính đăng ký đã xác nhận | Thẻ "Doanh thu học phí" + số tiền đang chờ xác nhận |
+| 27 | Đã xác nhận thì không cho huỷ; học viên huỷ thì đổi trạng thái chứ không xoá; thêm cột "Huỷ bởi" | Quy tắc huỷ ở database, cột `cancelled_by`/`cancelled_at`, cột "Huỷ bởi" trong admin (migration-005); sửa lỗi khi chạy trên database chưa có migration-003 |
+| 28 | Bỏ nút "Tham gia lớp học" dưới Câu chuyện Song Tử | Đã bỏ (phía trên đã có nút) |
+| 29 | Đổi SĐT thành 0900000000, email thành geminidance@example.com.vn | Cập nhật ở mọi trang |
+| 30 | Hiển thị các video gần nhất dạng trượt để xem trên điện thoại/tablet | Carousel video vuốt được, có ảnh thu nhỏ, bấm là phát ngay trên web |
+| 31 | Đưa website lên Cloudflare | Thêm `wrangler.jsonc`, `.assetsignore`; website chạy tại `gemini-dance.nthh169.workers.dev` |
+| 32 | Đưa ảnh cho các sản phẩm còn lại, tên hiển thị theo tên ảnh | Ảnh cho 6 sản phẩm còn lại, đổi tên sản phẩm theo tên ảnh (migration-006) |
+| 33 | Link Cloudflare không cập nhật ảnh mới trong khi GitHub Pages đã cập nhật | Tìm ra nguyên nhân: Cloudflare mất quyền truy cập repo GitHub nên không tự build; hướng dẫn kết nối lại và đẩy commit mới để build |
 
-## 6. Hướng dẫn chạy & deploy
-Xem [README.md](README.md).
+---
+
+## 6. Chạy thử và triển khai
+- Chạy ở máy: `python3 -m http.server 8000` rồi mở http://localhost:8000 (chi tiết trong `README.md`).
+- Database mới: chạy `supabase/schema.sql`. Database đã có: chạy lần lượt các file migration còn thiếu.
+- Triển khai: push lên nhánh `main` thì GitHub Pages và Cloudflare Workers tự cập nhật.

@@ -4,8 +4,8 @@ window.GD_CONFIG = {
   SUPABASE_URL: "https://qhkdldltwqnwpmifqdcj.supabase.co",
   SUPABASE_KEY: "sb_publishable_th6ALyrrhz5qWwppeBOlRw_ouLOX2CU",
   ADDRESS: "188/5/1 Nguyễn Suý, Q. Tân Phú, Tp.HCM",
-  PHONE: "0909 169 169",
-  EMAIL: "hello@geminidance.vn",
+  PHONE: "0900000000",
+  EMAIL: "geminidance@example.com.vn",
   SOCIAL: {
     tiktok: "https://www.tiktok.com/@gemini.dance169",
     facebook: "https://www.facebook.com/gemini.dance169",

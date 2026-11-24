@@ -275,7 +275,15 @@
 
 ---
 
-## Prompt 29 – *(thêm tiếp ở đây)*
+## Prompt 29 – Đổi số điện thoại và email liên hệ (24/11/2026)
+**Prompt:**
+> Đổi số điện thoại chỗ này là 0900000000, email đổi là geminidance@example.com.vn *(kèm ảnh phần Liên hệ ở footer)*
+
+**Kết quả:** Sửa `PHONE` và `EMAIL` trong `assets/js/config.js`; footer mọi trang hiện ☎ 0900000000 và ✉ geminidance@example.com.vn.
+
+---
+
+## Prompt 30 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

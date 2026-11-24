@@ -283,7 +283,15 @@
 
 ---
 
-## Prompt 30 – *(thêm tiếp ở đây)*
+## Prompt 30 – Video YouTube dạng trượt (24/11/2026)
+**Prompt:**
+> Vì phần video này trên các device khác như điện thoại tablet không thể xem được video tiếp theo, phải mở youtube, cho nên bạn hãy làm theo kiểu hiển thị cả 5 video gần nhất và cho user slide qua để xem đc ko?
+
+**Kết quả:** Phần YouTube ở Trang chủ thành khung trượt (carousel): vuốt ngang trên điện thoại/tablet, hoặc bấm mũi tên ‹ › và chấm tròn bên dưới. Mỗi video hiện ảnh bìa + nút play; bấm mới tải trình phát (trang nhẹ hơn), trượt sang video khác thì video đang phát tự dừng. Danh sách video nằm ở `YOUTUBE_VIDEOS` trong `assets/js/config.js` (tối đa 5 mã video, mới nhất để đầu). Kênh hiện có 3 video nên đang hiện 3; khi đăng video mới chỉ cần thêm mã vào đầu danh sách.
+
+---
+
+## Prompt 31 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

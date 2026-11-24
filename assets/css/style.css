@@ -87,6 +87,23 @@ p { margin: 0 0 1em; }
 /* ---------- Video & map ---------- */
 .embed { position: relative; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: 0 0 60px rgba(138,124,240,.25); background: #000; }
 .embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-carousel { position: relative; max-width: 900px; margin: auto; }
+.vc-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+.vc-track::-webkit-scrollbar { display: none; }
+.vc-slide { flex: 0 0 100%; scroll-snap-align: start; }
+.vc-thumb { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: #000; cursor: pointer; }
+.vc-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: .85; transition: opacity .2s; }
+.vc-thumb:hover img { opacity: 1; }
+.vc-play { position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px; border-radius: 50%; background: var(--grad); box-shadow: 0 0 30px rgba(232,67,154,.6); }
+.vc-play::after { content: ""; position: absolute; left: 29px; top: 22px; border-style: solid; border-width: 14px 0 14px 22px; border-color: transparent transparent transparent #fff; }
+.vc-nav { position: absolute; top: calc(50% - 22px); transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: rgba(7,6,13,.75); color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer; z-index: 2; }
+.vc-nav:disabled { opacity: .3; cursor: default; }
+.vc-prev { left: -22px; } .vc-next { right: -22px; }
+.vc-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+.vc-dots button { width: 10px; height: 10px; border-radius: 999px; border: 0; padding: 0; background: var(--line); cursor: pointer; transition: width .2s; }
+.vc-dots button.active { width: 28px; background: var(--grad); }
+.video-carousel.single .vc-nav, .video-carousel.single .vc-dots { display: none; }
+@media (max-width: 960px) { .vc-prev { left: 8px; } .vc-next { right: 8px; } }
 .contact-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; align-items: stretch; }
 .map-embed { aspect-ratio: auto; min-height: 380px; box-shadow: none; }
 .contact-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px; }

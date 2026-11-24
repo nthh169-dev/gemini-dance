@@ -97,11 +97,13 @@
       <div class="section-head">
         <span class="eyebrow">YouTube</span>
         <h2>Xem Gemini Dance trên sàn tập</h2>
-        <p class="muted">Video mới nhất từ kênh <a href="https://www.youtube.com/@GeminiDance" target="_blank" rel="noopener">@GeminiDance</a>.</p>
+        <p class="muted">Video mới nhất từ kênh <a href="https://www.youtube.com/@GeminiDance" target="_blank" rel="noopener">@GeminiDance</a>. Vuốt hoặc bấm mũi tên để xem video khác.</p>
       </div>
-      <div class="embed" style="max-width:900px;margin:auto">
-        <iframe id="yt-frame" title="Video YouTube Gemini Dance" loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <div class="video-carousel" id="yt-carousel">
+        <div class="vc-track" id="vc-track"></div>
+        <button class="vc-nav vc-prev" type="button" aria-label="Video trước">‹</button>
+        <button class="vc-nav vc-next" type="button" aria-label="Video sau">›</button>
+        <div class="vc-dots" id="vc-dots"></div>
       </div>
     </div>
   </section>
@@ -161,9 +163,44 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
+// Video YouTube dạng trượt: hiện ảnh bìa, bấm mới tải video (nhẹ và chạy được trên điện thoại)
+function initVideoCarousel(ids) {
+  const track = document.getElementById("vc-track"), dots = document.getElementById("vc-dots"), box = document.getElementById("yt-carousel");
+  if (!ids.length) { box.hidden = true; return; }
+  const thumb = (id, i) => `<button type="button" class="vc-thumb" data-id="${esc(id)}" aria-label="Phát video ${i + 1}">
+      <img src="https://i.ytimg.com/vi/${esc(id)}/hqdefault.jpg" alt="Video Gemini Dance ${i + 1}" loading="lazy"><span class="vc-play" aria-hidden="true"></span></button>`;
+  track.innerHTML = ids.map((id, i) => `<div class="vc-slide embed" data-i="${i}">${thumb(id, i)}</div>`).join("");
+  dots.innerHTML = ids.map((_, i) => `<button type="button" aria-label="Video ${i + 1}" data-go="${i}"></button>`).join("");
+  const slides = [...track.children];
+  let cur = 0;
+  const stopAll = () => slides.forEach((s, i) => { if (s.querySelector("iframe")) s.innerHTML = thumb(ids[i], i); });
+  const mark = () => {
+    [...dots.children].forEach((d, i) => d.classList.toggle("active", i === cur));
+    box.querySelector(".vc-prev").disabled = cur === 0;
+    box.querySelector(".vc-next").disabled = cur === ids.length - 1;
+  };
+  const go = (i) => { const n = Math.max(0, Math.min(ids.length - 1, i)); if (n !== cur) stopAll(); cur = n; track.scrollTo({ left: slides[cur].offsetLeft - track.offsetLeft, behavior: "smooth" }); };
+  track.addEventListener("click", (e) => {
+    const b = e.target.closest(".vc-thumb"); if (!b) return;
+    stopAll();
+    b.parentElement.innerHTML = `<iframe src="https://www.youtube.com/embed/${b.dataset.id}?autoplay=1&rel=0&playsinline=1" title="Video YouTube Gemini Dance"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  });
+  let t;
+  track.addEventListener("scroll", () => { clearTimeout(t); t = setTimeout(() => {
+    const i = Math.round(track.scrollLeft / track.clientWidth);
+    if (i !== cur) { cur = i; stopAll(); }
+    mark();
+  }, 120); });
+  box.querySelector(".vc-prev").onclick = () => go(cur - 1);
+  box.querySelector(".vc-next").onclick = () => go(cur + 1);
+  dots.addEventListener("click", (e) => { if (e.target.dataset.go) go(+e.target.dataset.go); });
+  if (ids.length < 2) box.classList.add("single");
+  mark();
+}
 (async function () {
   const C = GD_CONFIG;
-  document.getElementById("yt-frame").src = C.YOUTUBE_EMBED;
+  initVideoCarousel((C.YOUTUBE_VIDEOS || []).slice(0, 5));
   document.getElementById("map-frame").src = C.MAP_EMBED;
   document.getElementById("addr").innerHTML = ICON.pin + "<span>" + esc(C.ADDRESS) + "</span>";
   document.getElementById("social-list").innerHTML = [

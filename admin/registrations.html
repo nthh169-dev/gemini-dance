@@ -59,6 +59,7 @@
   form.course_id.innerHTML = courseOpts;
   form.status.innerHTML = Object.entries(STATUS_REG).map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
 
+  const CANCEL_BY = { student: "Học viên", admin: "Admin" };
   async function load() {
     const { data, error } = await sb.from("registrations").select("*").order("created_at", { ascending: false });
     if (error) return toast(error.message, "err");
@@ -68,13 +69,14 @@
     const q = document.getElementById("q").value.toLowerCase(), fc = document.getElementById("f-course").value, fs = document.getElementById("f-status").value;
     const list = rows.filter((r) => (!fc || String(r.course_id) === fc) && (!fs || r.status === fs) &&
       (!q || [r.full_name, r.phone, r.code, r.email].join(" ").toLowerCase().includes(q)));
-    document.getElementById("tbl").innerHTML = `<tr><th>Mã</th><th>Họ tên</th><th>SĐT</th><th>Email</th><th>Năm sinh</th><th>Khoá</th><th>Ghi chú</th><th>Trạng thái</th><th>Ngày ĐK</th><th></th></tr>` +
+    document.getElementById("tbl").innerHTML = `<tr><th>Mã</th><th>Họ tên</th><th>SĐT</th><th>Email</th><th>Năm sinh</th><th>Khoá</th><th>Ghi chú</th><th>Trạng thái</th><th>Huỷ bởi</th><th>Ngày ĐK</th><th></th></tr>` +
       (list.map((r) => `<tr>
         <td><b>${esc(r.code)}</b></td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(r.email || "")}</td><td>${r.birth_year || ""}</td>
         <td>${esc(cname[r.course_id] || "")}</td><td class="wrap">${esc(r.note || "")}</td>
-        <td>${statusSelect(STATUS_REG, r.status, `data-status="${r.id}"`)}</td><td>${fmtDate(r.created_at)}</td>
+        <td>${statusSelect(STATUS_REG, r.status, `data-status="${r.id}"`)}</td>
+        <td>${r.status === "cancelled" ? (CANCEL_BY[r.cancelled_by] || "—") + (r.cancelled_at ? `<br><small class="muted">${fmtDate(r.cancelled_at)}</small>` : "") : ""}</td><td>${fmtDate(r.created_at)}</td>
         <td class="row-actions"><button class="btn btn-ghost btn-sm" data-edit="${r.id}">Sửa</button><button class="btn btn-danger btn-sm" data-del="${r.id}">Xoá</button></td>
-      </tr>`).join("") || `<tr><td colspan="10" class="muted">Không có dữ liệu.</td></tr>`);
+      </tr>`).join("") || `<tr><td colspan="11" class="muted">Không có dữ liệu.</td></tr>`);
   }
   ["q", "f-course", "f-status"].forEach((id) => document.getElementById(id).addEventListener("input", render));
 
@@ -83,7 +85,7 @@
   tbl.addEventListener("change", async (e) => {
     const id = e.target.dataset.status; if (!id) return;
     const { error } = await sb.from("registrations").update({ status: e.target.value, updated_at: new Date().toISOString() }).eq("id", id);
-    if (error) toast(error.message, "err"); else { toast("Đã cập nhật trạng thái"); rows.find((r) => r.id == id).status = e.target.value; }
+    if (error) toast(error.message, "err"); else { toast("Đã cập nhật trạng thái"); load(); }
   });
   tbl.addEventListener("click", async (e) => {
     // DELETE

@@ -139,9 +139,19 @@
     if (error || !data) { box.innerHTML = `<p class="result-box">Không tìm thấy đăng ký với mã và số điện thoại này.</p>`; return; }
     current = { code, phone };
     const STATUS = { pending: "Chờ xác nhận", confirmed: "Đã xác nhận", cancelled: "Đã huỷ" };
+    const head = `<p>Mã <b>${esc(data.code)}</b> · <span class="status status-${data.status}">${STATUS[data.status]}</span> · đăng ký lúc ${fmtDate(data.created_at)}</p>
+      <p class="muted">${esc(data.course_name)} · ${esc(data.schedule_days)} ${esc(data.schedule_time)}</p>`;
+    // Đã xác nhận / đã huỷ: chỉ xem, không sửa hay huỷ được nữa
+    if (data.status !== "pending") {
+      const why = data.status === "confirmed"
+        ? "Đăng ký đã được Gemini Dance xác nhận nên không thể sửa hoặc huỷ online. Nếu cần thay đổi, bạn vui lòng liên hệ trung tâm."
+        : `Đăng ký đã được huỷ${data.cancelled_by === "admin" ? " bởi Gemini Dance" : data.cancelled_by === "student" ? " theo yêu cầu của bạn" : ""}${data.cancelled_at ? " lúc " + fmtDate(data.cancelled_at) : ""}.`;
+      box.innerHTML = `<div class="result-box">${head}<p class="notice" style="margin:12px 0 0">${why}</p></div>`;
+      return;
+    }
     box.innerHTML = `
       <div class="result-box">
-        <p>Mã <b>${esc(data.code)}</b> · <span class="status status-${data.status}">${STATUS[data.status]}</span> · đăng ký lúc ${fmtDate(data.created_at)}</p>
+        ${head}
         <form id="edit-form" class="form-grid" novalidate>
           <div class="full"><label>Họ và tên</label><input name="full_name" required value="${esc(data.full_name)}"></div>
           <div><label>Email</label><input name="email" type="text" inputmode="email" value="${esc(data.email || "")}"></div>
@@ -176,7 +186,7 @@
     document.getElementById("cancel-btn").addEventListener("click", async () => {
       if (!confirm("Bạn chắc chắn muốn huỷ đăng ký này?")) return;
       const { data: ok, error } = await sb.rpc("cancel_registration", { p_code: current.code, p_phone: current.phone });
-      if (error || !ok) { toast("Không huỷ được.", "err"); return; }
+      if (error || !ok) { toast("Không huỷ được" + (error ? ": " + errText(error) : "."), "err"); return; }
       box.innerHTML = `<p class="result-box">Đã huỷ đăng ký <b>${esc(current.code)}</b>. Hẹn gặp lại bạn ở khoá sau nhé!</p>`;
       toast("Đã huỷ đăng ký.");
     });

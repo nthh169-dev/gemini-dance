@@ -186,6 +186,7 @@ input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-b
 .status { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: .8rem; font-weight: 600; }
 .status-pending, .status-new { background: rgba(232,194,122,.18); color: var(--gold); }
 .status-confirmed, .status-done { background: rgba(62,230,223,.15); color: var(--cyan); }
+.notice { padding: 12px 16px; border-radius: 12px; background: rgba(232,194,122,.12); color: var(--gold); font-size: .9rem; }
 .status-cancelled { background: rgba(232,67,154,.15); color: #ff8cc6; }
 .status-shipping { background: rgba(138,124,240,.2); color: #b9b0ff; }
 

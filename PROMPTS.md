@@ -254,7 +254,20 @@
 
 ---
 
-## Prompt 27 – *(thêm tiếp ở đây)*
+## Prompt 27 – Quy tắc huỷ đăng ký và cột "Huỷ bởi" (24/11/2026)
+**Prompt:**
+> Hãy sửa lại giúp mình khi học viên đăng ký khoá học và admin đã chuyển trạng thái sang "Đã xác nhận" thì sẽ không cho huỷ nữa. Thêm nữa, khi học viên tự huỷ thì không xoá record mà để nguyên và chuyển trạng thái sang "Đã huỷ". Thêm một cột hiện huỷ do học viên hay do admin
+
+**Kết quả:**
+- `supabase/migration-005-cancel-rules.sql` (đã gộp vào `schema.sql`): thêm cột `cancelled_by` ('student' / 'admin') và `cancelled_at`; trigger tự ghi "admin" khi admin đổi trạng thái sang Đã huỷ.
+- Hàm `cancel_registration`: không xoá nữa mà chuyển sang `cancelled` + `cancelled_by = 'student'`; báo lỗi nếu đăng ký đã xác nhận hoặc đã huỷ. Hàm `update_registration` cũng không cho học viên sửa khi đã xác nhận / đã huỷ.
+- Trang Đăng ký (tab Tra cứu): đăng ký đã xác nhận hoặc đã huỷ chỉ hiện thông tin + lời nhắn, không còn nút Lưu / Huỷ.
+- Admin › Đăng ký: thêm cột **Huỷ bởi** (Học viên / Admin + thời điểm huỷ).
+- Đã chạy thử trên PostgreSQL cục bộ: huỷ khi chờ xác nhận → giữ record, Huỷ bởi = Học viên; huỷ/sửa khi đã xác nhận → bị chặn; admin đổi sang Đã huỷ → Huỷ bởi = Admin.
+
+---
+
+## Prompt 28 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

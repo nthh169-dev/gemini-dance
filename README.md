@@ -37,7 +37,7 @@ HTML · CSS · JavaScript thuần · [Supabase](https://supabase.com) (PostgreSQ
    insert into public.admins(user_id, email)
    select id, email from auth.users where email = 'email-admin-cua-ban@gmail.com';
    ```
-3b. Nếu database được tạo **trước ngày 24/11/2026 (bản có ô "Năm sinh")**: chạy thêm `supabase/migration-002-birth-date.sql` trong SQL Editor để có cột *Ngày sinh*.
+3b. Nếu database được tạo **trước ngày 24/11/2026**: chạy thêm `supabase/migration-003-validate.sql` trong SQL Editor (kiểm tra 18 tuổi, email, SĐT). File `migration-002-birth-date.sql` không cần chạy nữa.
 4. **Authentication → Sign In / Providers → Email**: tắt *Allow new users to sign up* để người lạ không tự tạo tài khoản.
 5. **Authentication → URL Configuration** (để chức năng *Quên mật khẩu* hoạt động):
    - *Site URL*: link website sau khi deploy, ví dụ `https://nthh169-dev.github.io/gemini-dance/`

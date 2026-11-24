@@ -30,10 +30,10 @@
       <div class="form-card">
         <h3>Tóm tắt đơn hàng</h3>
         <div id="summary"></div>
-        <form id="order-form" style="display:grid;gap:12px;margin-top:18px">
+        <form id="order-form" novalidate style="display:grid;gap:12px;margin-top:18px">
           <div><label for="o-name">Họ và tên *</label><input id="o-name" name="name" required></div>
-          <div><label for="o-phone">Số điện thoại *</label><input id="o-phone" name="phone" required pattern="[0-9+ ]{9,15}"></div>
-          <div><label for="o-email">Email</label><input id="o-email" name="email" type="email"></div>
+          <div><label for="o-phone">Số điện thoại *</label><input id="o-phone" name="phone" type="tel" inputmode="tel" required placeholder="0909 123 456" autocomplete="tel"></div>
+          <div><label for="o-email">Email</label><input id="o-email" name="email" type="text" inputmode="email" placeholder="ban@gmail.com" autocomplete="email"></div>
           <div><label for="o-addr">Địa chỉ giao hàng *</label><input id="o-addr" name="address" required></div>
           <div><label for="o-note">Ghi chú</label><textarea id="o-note" name="note" style="min-height:60px"></textarea></div>
           <button class="btn btn-primary" type="submit">Đặt hàng (COD)</button>
@@ -106,19 +106,21 @@
     Cart.save(items); render();
   });
 
+  const validateOrder = attachContactValidation(document.getElementById("order-form"));
   document.getElementById("order-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (!validateOrder() || !e.target.reportValidity()) { toast("Vui lòng kiểm tra lại thông tin.", "err"); return; }
     const items = Cart.get();
     if (!items.length) { toast("Giỏ hàng trống.", "err"); return; }
     if (!sb) { toast("Chưa kết nối được database.", "err"); return; }
     const f = e.target, btn = f.querySelector("button");
     btn.disabled = true;
     const { data, error } = await sb.rpc("place_order", {
-      p_name: f.name.value, p_phone: f.phone.value, p_email: f.email.value, p_address: f.address.value, p_note: f.note.value,
+      p_name: f.name.value, p_phone: normPhone(f.phone.value), p_email: f.email.value.trim(), p_address: f.address.value, p_note: f.note.value,
       p_items: items.map((i) => ({ product_id: i.product_id, size: i.size, color: i.color, qty: i.qty }))
     });
     btn.disabled = false;
-    if (error) { toast("Đặt hàng thất bại: " + error.message, "err"); return; }
+    if (error) { toast("Đặt hàng thất bại: " + (error.message || "").replace(/^.*?ERROR:\s*/, ""), "err"); return; }
     Cart.save([]); render(); f.reset();
     document.getElementById("order-result").innerHTML = `
       <div class="result-box"><p>💖 Đặt hàng thành công! Mã đơn:</p><div class="code-big grad-text">${esc(data.code)}</div>
@@ -128,7 +130,7 @@
   document.getElementById("track-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!sb) return;
-    const { data } = await sb.rpc("find_order", { p_code: document.getElementById("t-code").value, p_phone: document.getElementById("t-phone").value });
+    const { data } = await sb.rpc("find_order", { p_code: document.getElementById("t-code").value, p_phone: normPhone(document.getElementById("t-phone").value) });
     const ST = { new: "Mới", shipping: "Đang giao", done: "Hoàn thành", cancelled: "Đã huỷ" };
     document.getElementById("track-result").innerHTML = !data ? `<p class="result-box">Không tìm thấy đơn hàng.</p>` : `
       <div class="result-box">

@@ -113,7 +113,19 @@
 
 ---
 
-## Prompt 11 – *(thêm tiếp ở đây)*
+## Prompt 11 – Chỉ chọn năm sinh, chặn dưới 18 tuổi, kiểm tra email & SĐT (24/11/2026)
+**Prompt:**
+> component chọn ngày tháng năm sinh vẫn chưa work đúng. User đánh số năm vẫn bất tiện bạn hãy thay đổi lại để chỉ cần điền năm sinh. Và check dưới 18 tuổi thì ko cho đăng ký. Ngoài ra check format e mail và format số đien thoại luôn
+
+**Kết quả:**
+- Ô ngày sinh đổi thành **danh sách chọn năm sinh** (không phải gõ), chỉ có các năm đủ 18 tuổi, kèm dòng nhắc "Chỉ nhận học viên từ 18 tuổi".
+- **Kiểm tra định dạng**: SĐT Việt Nam 10 số bắt đầu 03/05/07/08/09 (chấp nhận gõ có khoảng trắng, dấu chấm hoặc +84); email dạng `ten@domain.xx`. Báo lỗi màu hồng ngay dưới ô khi rời ô hoặc bấm gửi. Áp dụng cho form đăng ký, form sửa đăng ký, form đặt hàng và trang admin.
+- **Database cũng kiểm tra** (`supabase/migration-003-validate.sql`): hàm RPC từ chối dưới 18 tuổi, SĐT/email sai định dạng và báo lỗi tiếng Việt; SĐT được chuẩn hoá trước khi lưu và khi tra cứu.
+- Đã chạy thử SQL trên PostgreSQL (DB gốc, DB đã chạy migration-002, DB mới) và thử form bằng trình duyệt tự động.
+
+---
+
+## Prompt 12 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

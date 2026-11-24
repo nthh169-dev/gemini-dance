@@ -143,6 +143,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
 textarea { min-height: 90px; resize: vertical; }
 input, select, textarea { color-scheme: dark; } /* lịch, dropdown, icon của trình duyệt dùng giao diện tối */
 input[type="date"] { min-height: 48px; }
+.field-error { display: block; color: #ff8cc6; font-size: .82rem; margin-top: 6px; min-height: 0; }
+.field-error:empty { display: none; }
+input.invalid, select.invalid { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(232,67,154,.18); }
+.field-hint { display: block; color: var(--muted); font-size: .8rem; margin-top: 6px; }
 input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .85; filter: drop-shadow(0 0 4px rgba(62,230,223,.5)); }
 /* Ẩn icon danh bạ / mật khẩu tự động của Safari (icon hình người trong ô nhập) */
 input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-button, input::-webkit-strong-password-auto-fill-button {

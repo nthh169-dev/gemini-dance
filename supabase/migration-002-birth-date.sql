@@ -1,3 +1,4 @@
+-- ⚠️ ĐÃ THAY BẰNG migration-003-validate.sql (web dùng lại "Năm sinh"). Không cần chạy file này.
 -- =====================================================================
 -- MIGRATION 002 – Đổi "Năm sinh" thành "Ngày sinh" (có lịch để chọn)
 -- Supabase > SQL Editor > New query > dán file này > Run. Chạy lại vẫn an toàn.

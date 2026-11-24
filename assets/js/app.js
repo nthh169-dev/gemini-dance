@@ -22,6 +22,37 @@
   window.fmtDate = (d) => new Date(d).toLocaleString("vi-VN", { dateStyle: "short", timeStyle: "short" });
   window.qs = (k) => new URLSearchParams(location.search).get(k);
 
+  // ---------- Kiểm tra dữ liệu nhập ----------
+  window.normPhone = (v) => String(v || "").replace(/[\s.\-()]/g, "").replace(/^\+?84/, "0");
+  window.isPhone = (v) => /^0(3|5|7|8|9)\d{8}$/.test(normPhone(v));
+  window.isEmail = (v) => /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/i.test(String(v || "").trim());
+  window.MIN_AGE = 18;
+  window.maxBirthYear = () => new Date().getFullYear() - MIN_AGE;
+  window.yearOptions = (sel) => {
+    let h = `<option value="">-- Chọn năm sinh --</option>`;
+    for (let y = maxBirthYear(); y >= 1950; y--) h += `<option value="${y}" ${String(y) === String(sel) ? "selected" : ""}>${y}</option>`;
+    return h;
+  };
+  // Gắn kiểm tra SĐT / email cho một form: báo lỗi ngay dưới ô khi rời ô và khi bấm gửi
+  window.attachContactValidation = (form) => {
+    const rules = [
+      ["phone", (v) => isPhone(v) ? "" : "Số điện thoại cần 10 số, bắt đầu bằng 03, 05, 07, 08 hoặc 09 (VD: 0909 123 456)."],
+      ["email", (v) => !v.trim() || isEmail(v) ? "" : "Email không đúng định dạng (VD: ten@gmail.com)."],
+      ["birth_year", (v) => v ? "" : `Vui lòng chọn năm sinh. Gemini Dance nhận học viên từ ${MIN_AGE} tuổi (sinh năm ${maxBirthYear()} trở về trước).`]
+    ];
+    const check = (el, fn) => {
+      const msg = fn(el.value);
+      el.setCustomValidity(msg);
+      let hint = el.parentElement.querySelector(".field-error");
+      if (!hint) { hint = document.createElement("small"); hint.className = "field-error"; el.parentElement.appendChild(hint); }
+      hint.textContent = msg;
+      el.classList.toggle("invalid", !!msg);
+      return !msg;
+    };
+    rules.forEach(([name, fn]) => { const el = form.elements[name]; if (el) { el.addEventListener("blur", () => check(el, fn)); el.addEventListener("change", () => check(el, fn)); el.addEventListener("input", () => { if (el.classList.contains("invalid")) check(el, fn); }); } });
+    return () => rules.map(([name, fn]) => { const el = form.elements[name]; return !el || check(el, fn); }).every(Boolean);
+  };
+
   window.toast = function (msg, type = "ok") {
     let box = document.getElementById("toast-box");
     if (!box) { box = document.createElement("div"); box.id = "toast-box"; document.body.appendChild(box); }

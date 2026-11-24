@@ -2,6 +2,10 @@
 {
   "name": "gemini-dance",
   "compatibility_date": "2026-11-01",
+  // Luôn bật link https://gemini-dance.<tài-khoản>.workers.dev và link preview,
+  // để mỗi lần deploy không tự tắt workers.dev.
+  "workers_dev": true,
+  "preview_urls": true,
   "assets": {
     "directory": "./"
   }

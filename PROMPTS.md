@@ -194,7 +194,15 @@
 
 ---
 
-## Prompt 20 – *(thêm tiếp ở đây)*
+## Prompt 20 – Bỏ "Lịch khai giảng" ở trang Giới thiệu (24/11/2026)
+**Prompt:**
+> Khu vực này ở trang phía trên nếu để cố định lịch khai giảng như thế này thì khi admin add thêm khoá mới sẽ ko đúng nữa. Bỏ nguyên phần này đi hoặc bỏ thông tin lớp, thời gian và ngày đi *(kèm ảnh phần "Poster tuyển sinh" ở about.html)*
+
+**Kết quả:** Bỏ nguyên phần "Poster tuyển sinh / Lịch khai giảng" khỏi `about.html`, vì ảnh poster cũng in sẵn lịch học nên chỉ bỏ chữ thì vẫn sai khi đổi khoá. Lịch học giờ chỉ hiển thị ở trang Khoá học (lấy từ database). Ảnh `assets/img/poster.jpg` vẫn giữ trong thư mục để dùng cho báo cáo.
+
+---
+
+## Prompt 21 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

@@ -9,7 +9,7 @@ Website **Gemini Dance** (trung tâm dạy nhảy hư cấu + Gemini Shop). Đ�
 - HTML + CSS + JavaScript thuần (không framework, không build step) → deploy thẳng lên GitHub Pages.
 - Database & đăng nhập: **Supabase** qua CDN `@supabase/supabase-js@2.58.0`.
 - Biểu đồ: **Chart.js 4.4.1** (CDN) – chỉ ở trang admin.
-- Font: Google Fonts (Poppins, Be Vietnam Pro).
+- Font: Google Fonts – chỉ dùng **Be Vietnam Pro** (hỗ trợ đầy đủ dấu tiếng Việt).
 
 ## Cấu trúc thư mục
 ```

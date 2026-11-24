@@ -149,7 +149,15 @@
 
 ---
 
-## Prompt 15 – *(thêm tiếp ở đây)*
+## Prompt 15 – Thống nhất font chữ (24/11/2026)
+**Prompt:**
+> UI ko tốt chữ lớn chữ nhỏ hãy sửa lại font chữ lại cho đồng đều và thống nhất *(kèm ảnh tiêu đề "Beginner – Lớp Căn Bản")*
+
+**Kết quả:** Nguyên nhân: tiêu đề dùng font Poppins, font này không có đủ dấu tiếng Việt nên các chữ như "ơ", "ă", "ả" bị trình duyệt lấy từ font khác, nhìn lúc to lúc nhỏ. Đã bỏ Poppins, toàn bộ website (trang khách + admin, cả logo chữ SVG) chỉ dùng một font **Be Vietnam Pro** (400–800), cập nhật CLAUDE.md và DESIGN.md theo.
+
+---
+
+## Prompt 16 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

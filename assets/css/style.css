@@ -6,7 +6,7 @@
   --beginner: #7b3fa0; --advanced: #2f5da8;
   --grad: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
   --radius: 18px; --shadow: 0 10px 40px rgba(0,0,0,.45);
-  --font-head: "Poppins", system-ui, sans-serif; --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-head: "Be Vietnam Pro", system-ui, sans-serif; --font-body: "Be Vietnam Pro", system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }

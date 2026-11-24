@@ -33,8 +33,9 @@ nền **đêm sâu**, chòm sao **Song Tử** vàng nhạt, logo **neon gradient
 Gradient thương hiệu: `linear-gradient(90deg, #3EE6DF, #8A7CF0, #E8439A)` – dùng cho tiêu đề lớn, nút chính, viền nổi bật.
 
 ## 4. Typography
-- **Poppins** (600/700) – tiêu đề, nút, menu (giống chữ trong logo).
-- **Be Vietnam Pro** (400/500) – nội dung (hiển thị tiếng Việt đẹp).
+- **Một font duy nhất: Be Vietnam Pro** cho cả tiêu đề, nút, menu và nội dung. Font này hỗ trợ đầy đủ dấu tiếng Việt (ơ, ă, ả, ễ…), nên chữ có dấu không bị lệch cỡ.
+  - *Không dùng Poppins*: Poppins không có bộ ký tự tiếng Việt, trình duyệt phải mượn font khác cho chữ có dấu nên chữ "lớn nhỏ" không đều.
+- Độ đậm: 400 (nội dung), 500 (menu, nhãn), 600 (nút), 700 (tiêu đề), 800 (tiêu đề hero).
 - Cỡ chữ: H1 `clamp(2.2rem, 5vw, 3.6rem)`, H2 `clamp(1.6rem, 3vw, 2.4rem)`, body 16px, line-height 1.65.
 
 ## 5. Thành phần giao diện

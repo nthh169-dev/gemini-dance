@@ -190,7 +190,7 @@
       <radialGradient id="${id}b" cx=".5" cy=".35" r=".8"><stop offset="0" stop-color="${tint}"/><stop offset="1" stop-color="#0b0a14"/></radialGradient></defs>
       <rect width="200" height="250" fill="url(#${id}b)"/>
       <g transform="translate(0,35)" fill="url(#${id})" stroke="url(#${id})">${ICONS[p.category] || ICONS["phu-kien"]}</g>
-      <text x="100" y="228" text-anchor="middle" fill="#f3f0ff" opacity=".55" font-family="Poppins,sans-serif" font-size="11" letter-spacing="3">GEMINI SHOP</text></svg>`;
+      <text x="100" y="228" text-anchor="middle" fill="#f3f0ff" opacity=".55" font-family="Be Vietnam Pro,sans-serif" font-size="11" letter-spacing="3">GEMINI SHOP</text></svg>`;
   };
   window.priceHtml = (p) => p.sale_price
     ? `<span class="price">${vnd(p.sale_price)}</span> <s class="price-old">${vnd(p.price)}</s>`

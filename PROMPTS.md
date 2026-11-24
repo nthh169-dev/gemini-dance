@@ -165,7 +165,15 @@
 
 ---
 
-## Prompt 17 – *(thêm tiếp ở đây)*
+## Prompt 17 – Nút Copy khoá học ở trang admin (24/11/2026)
+**Prompt:**
+> Trang course dành cho admin này hãy thêm ở mỗi dòng của khoá học một nút copy nữa, để khi tạo khoá mới mình copy đỡ phải sửa
+
+**Kết quả:** Mỗi dòng trong `admin/courses.html` có thêm nút **Copy** (giữa Sửa và Xoá). Bấm Copy sẽ mở form "Thêm khoá học" đã điền sẵn toàn bộ thông tin của khoá đó (lịch, học phí, mô tả, nội dung học…). Tên khoá thêm chữ "(bản sao)", slug tự đổi thành `<slug>-copy` (hoặc `-copy-2`, `-copy-3`… nếu đã có) để không trùng. Bấm Lưu sẽ tạo khoá **mới**, khoá gốc không bị thay đổi.
+
+---
+
+## Prompt 18 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

@@ -61,20 +61,29 @@
       rows.map((c) => `<tr><td>${c.id}</td><td><b>${esc(c.name)}</b><br><small class="muted">/${esc(c.slug)}</small></td>
         <td><span class="tag tag-${c.level}">${c.level.toUpperCase()}</span></td><td>${esc(c.schedule_days)}<br>${esc(c.schedule_time)}</td>
         <td>${vnd(c.fee)}</td><td>${c.max_students}</td><td>${c.is_active ? "✅" : "—"}</td>
-        <td class="row-actions"><button class="btn btn-ghost btn-sm" data-edit="${c.id}">Sửa</button><button class="btn btn-danger btn-sm" data-del="${c.id}">Xoá</button></td></tr>`).join("");
+        <td class="row-actions"><button class="btn btn-ghost btn-sm" data-edit="${c.id}">Sửa</button><button class="btn btn-ghost btn-sm" data-copy="${c.id}" title="Tạo khoá mới từ khoá này">Copy</button><button class="btn btn-danger btn-sm" data-del="${c.id}">Xoá</button></td></tr>`).join("");
   }
-  function open(c) {
-    form.dataset.id = c ? c.id : "";
-    document.getElementById("dlg-title").textContent = c ? "Sửa khoá học" : "Thêm khoá học";
+  // Slug chưa dùng: beginner-copy, beginner-copy-2, ...
+  function freeSlug(base) {
+    const used = new Set(rows.map((c) => c.slug));
+    let s = base + "-copy", n = 2;
+    while (used.has(s)) s = `${base}-copy-${n++}`;
+    return s;
+  }
+  function open(c, copy = false) {
+    form.dataset.id = c && !copy ? c.id : "";
+    document.getElementById("dlg-title").textContent = copy ? "Thêm khoá học (copy từ khoá có sẵn)" : c ? "Sửa khoá học" : "Thêm khoá học";
     FIELDS.forEach((k) => (form[k].value = c ? (c[k] ?? "") : ""));
     form.is_active.value = c ? String(c.is_active) : "true";
     form.highlights.value = c ? (c.highlights || []).join("\n") : "";
+    if (copy) { form.slug.value = freeSlug(c.slug); form.name.value = c.name + " (bản sao)"; }
     if (!c) { form.level.value = "beginner"; form.duration_weeks.value = 8; form.max_students.value = 20; }
     dlg.returnValue = ""; dlg.showModal();
   }
   document.getElementById("add").onclick = () => open(null);
   document.getElementById("tbl").addEventListener("click", async (e) => {
     if (e.target.dataset.edit) open(rows.find((c) => c.id == e.target.dataset.edit));
+    if (e.target.dataset.copy) open(rows.find((c) => c.id == e.target.dataset.copy), true);
     if (e.target.dataset.del) {
       if (!confirm("Xoá khoá học này? Các đăng ký thuộc khoá cũng sẽ bị xoá.")) return;
       const { error } = await sb.from("courses").delete().eq("id", e.target.dataset.del);

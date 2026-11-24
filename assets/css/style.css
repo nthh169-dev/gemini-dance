@@ -9,7 +9,7 @@
   --font-head: "Be Vietnam Pro", system-ui, sans-serif; --font-body: "Be Vietnam Pro", system-ui, sans-serif;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 var(--font-body); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 img, svg { max-width: 100%; display: block; }
 a { color: var(--cyan); text-decoration: none; }

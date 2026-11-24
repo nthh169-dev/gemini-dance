@@ -35,7 +35,8 @@
 | File | Trang | Nội dung chính |
 |---|---|---|
 | `index.html` | **Trang chủ** | Banner + logo + slogan, 2 thẻ khoá học (lấy từ DB), **video YouTube nhúng**, sản phẩm nổi bật, **Google Map nhúng**, link TikTok/Facebook/YouTube |
-| `about.html` | **Về chúng tôi** | Câu chuyện thương hiệu Song Tử, ý nghĩa logo, giá trị, đội ngũ, poster |
+| `index.html#ve-chung-toi` | **Về chúng tôi** (gộp vào Trang chủ) | Câu chuyện thương hiệu Song Tử, ý nghĩa logo, giá trị, đội ngũ. `about.html` chỉ còn tự chuyển về phần này |
+| `courses.html` | **Khoá học** | Danh sách mọi khoá đang mở (lấy từ DB), lọc theo cấp độ |
 | `course.html?slug=beginner` / `?slug=advanced` | **Chi tiết khoá học** | Lịch học, học phí, thời lượng, nội dung, số chỗ còn lại, nút "Đăng ký ngay" |
 | `register.html` | **Đăng ký khoá học** | Form đăng ký (INSERT) · Tra cứu đăng ký · Sửa (UPDATE) · Huỷ (DELETE) |
 | `shop.html` | **Gemini Shop** | Danh sách sản phẩm, lọc danh mục, sắp xếp giá, tìm kiếm |
@@ -95,7 +96,7 @@ Chi tiết trong `supabase/schema.sql`.
 
 | Tiêu chí | Điểm | Đáp ứng bằng |
 |---|---|---|
-| ≥ 3 trang: Home, About, Detail | 3 | `index.html`, `about.html`, `course.html`, `product.html` (+ nhiều trang khác) |
+| ≥ 3 trang: Home, About, Detail | 3 | `index.html` (gồm cả phần Về chúng tôi), `courses.html`, `course.html`, `product.html` (+ nhiều trang khác) |
 | Có database | 3 | Supabase (6 bảng) |
 | ≥ 2 chức năng chỉnh sửa DB | 2 | Đăng ký/sửa/huỷ khoá học, đặt hàng, toàn bộ admin CRUD |
 | Nhúng Google Map / YouTube | 0,5 | Trang chủ có cả hai |

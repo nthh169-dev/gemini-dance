@@ -16,7 +16,8 @@ HTML · CSS · JavaScript thuần · [Supabase](https://supabase.com) (PostgreSQ
 ## Cấu trúc
 ```
 ├── index.html            Trang chủ (YouTube + Google Map + mạng xã hội)
-├── about.html            Về chúng tôi
+├── about.html            Chuyển hướng về phần "Về chúng tôi" trên Trang chủ
+├── courses.html          Danh sách khoá học
 ├── course.html           Chi tiết khoá học (?slug=beginner | advanced)
 ├── register.html         Đăng ký / tra cứu / sửa / huỷ đăng ký
 ├── shop.html             Gemini Shop

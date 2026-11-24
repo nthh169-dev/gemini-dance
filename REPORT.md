@@ -31,7 +31,7 @@
 | # | Trang | File | Nội dung |
 |---|---|---|---|
 | 1 | **Trang chủ** | `index.html` | Banner logo + slogan, 2 thẻ khoá học (lấy từ DB), **video YouTube nhúng**, lý do chọn Gemini, sản phẩm nổi bật, **Google Map nhúng**, link TikTok / Facebook / YouTube |
-| 2 | **Về chúng tôi** | `about.html` | Câu chuyện Song Tử, ý nghĩa logo, giá trị cốt lõi, đội ngũ giáo viên, poster tuyển sinh |
+| 2 | **Về chúng tôi** | `index.html#ve-chung-toi` | Gộp vào Trang chủ: câu chuyện Song Tử, ý nghĩa logo, giá trị cốt lõi, đội ngũ giáo viên (`about.html` tự chuyển về đây) |
 | 3 | **Chi tiết khoá học** | `course.html?slug=beginner` / `advanced` | Lịch học, học phí, thời lượng, số chỗ còn trống (tính từ DB), nội dung học, nút đăng ký |
 | 4 | **Đăng ký khoá học** | `register.html` | Đăng ký mới · Tra cứu · Sửa · Huỷ |
 | 5 | **Gemini Shop** | `shop.html` | Danh sách sản phẩm, lọc danh mục, tìm kiếm, sắp xếp giá |

@@ -226,7 +226,6 @@
   const page = (location.pathname.split("/").pop() || "index.html").replace(".html", "") || "index";
   const NAV = [
     ["index.html", "Trang chủ", ["index"]],
-    ["about.html", "Về chúng tôi", ["about"]],
     ["courses.html", "Khoá học", ["courses", "course"]],
     ["register.html", "Đăng ký", ["register"]],
     ["shop.html", "Gemini Shop", ["shop", "product"]]
@@ -282,7 +281,7 @@
           <div>
             <h4>Khám phá</h4>
             <a href="${ROOT}index.html">Trang chủ</a>
-            <a href="${ROOT}about.html">Về chúng tôi</a>
+            <a href="${ROOT}index.html#ve-chung-toi">Về chúng tôi</a>
             <a href="${ROOT}courses.html">Khoá học &amp; lịch học</a>
             <a href="${ROOT}register.html">Đăng ký / Tra cứu</a>
             <a href="${ROOT}shop.html">Gemini Shop</a>

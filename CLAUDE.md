@@ -13,7 +13,7 @@ Website **Gemini Dance** (trung tâm dạy nhảy hư cấu + Gemini Shop). Đ�
 
 ## Cấu trúc thư mục
 ```
-index.html, about.html, courses.html (danh sách khoá), course.html (chi tiết), register.html, shop.html, product.html, cart.html
+index.html (gồm phần Về chúng tôi), about.html (chỉ chuyển hướng), courses.html (danh sách khoá), course.html (chi tiết), register.html, shop.html, product.html, cart.html
 admin/        login, dashboard, registrations, courses, products, orders (.html)
 assets/css/   style.css (site), admin.css (admin)
 assets/js/    config.js (URL + publishable key), app.js (dùng chung), admin.js (dùng chung admin)

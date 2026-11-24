@@ -202,7 +202,15 @@
 
 ---
 
-## Prompt 21 – *(thêm tiếp ở đây)*
+## Prompt 21 – Gộp "Trang chủ" và "Về chúng tôi" (24/11/2026)
+**Prompt:**
+> Do nội dung "Trang chủ" và "Về chúng tôi" cũng ngắn nên bạn có thể gom chung thành 1 trang dùm mình đc ko
+
+**Kết quả:** Claude nhắc rằng đề bài chấm riêng tiêu chí "≥ 3 trang: Home, About, Detail" và đề xuất giữ about.html. Hạnh chọn **gộp hẳn**. Toàn bộ nội dung About (câu chuyện Song Tử, ý nghĩa logo, giá trị cốt lõi, đội ngũ) chuyển vào Trang chủ, ngay dưới banner, tại mục `#ve-chung-toi`. Menu bỏ mục "Về chúng tôi"; link ở footer trỏ về `index.html#ve-chung-toi`; `about.html` chỉ còn tự chuyển hướng về đó để link cũ không bị hỏng. Cập nhật PRD, REPORT, README, CLAUDE.md.
+
+---
+
+## Prompt 22 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

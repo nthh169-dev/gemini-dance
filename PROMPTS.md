@@ -307,7 +307,15 @@
 
 ---
 
-## Prompt 33 – *(thêm tiếp ở đây)*
+## Prompt 33 – Cloudflare không tự build bản mới (24/11/2026)
+**Prompt:**
+> Link Cloudflare không thấy hình sản phẩm mới, trong khi link GitHub Pages bình thường *(kèm ảnh Deployments / Settings › Builds của Cloudflare)*
+
+**Kết quả:** Nguyên nhân: Cloudflare Workers báo "project is disconnected from your Git account", tức app Cloudflare trên GitHub chưa có quyền đọc repo, nên các lần push lên `main` không tạo bản build mới (Cloudflare vẫn chạy bản deploy cũ). Cách sửa: Settings › Builds › **Manage** → cấp quyền repo `gemini-dance` cho app "Cloudflare Workers and Pages", rồi push 1 commit để Cloudflare build lại. Thêm `"workers_dev": true` và `"preview_urls": true` vào `wrangler.jsonc` để link workers.dev luôn bật sau mỗi lần deploy.
+
+---
+
+## Prompt 34 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

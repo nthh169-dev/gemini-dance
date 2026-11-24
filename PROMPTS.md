@@ -246,7 +246,15 @@
 
 ---
 
-## Prompt 26 – *(thêm tiếp ở đây)*
+## Prompt 26 – Doanh thu học phí trên Dashboard (24/11/2026)
+**Prompt:**
+> Trên dashboard cũng hãy thể hiện số tiền doanh thu thu được do đăng ký nhảy. Nếu trạng thái đã xác nhận rồi thì cộng vào doanh thu, còn chưa xác nhận thì chưa tính vào doanh thu
+
+**Kết quả:** Dashboard thêm thẻ **Doanh thu học phí** = tổng học phí của các đăng ký ở trạng thái "Đã xác nhận" (theo học phí hiện tại của khoá). Dòng phụ ghi số đăng ký đã xác nhận và số tiền "chưa tính" của các đăng ký đang chờ xác nhận. Đăng ký đã huỷ không tính. Thẻ doanh thu cũ đổi tên thành **Doanh thu Shop**. Hàng thẻ tự co giãn để vừa 5 thẻ. Sửa luôn dòng phụ "Tổng người đăng ký" thành tổng theo cấp độ (trước đây bị lặp "Beginner" khi có 2 lớp Beginner).
+
+---
+
+## Prompt 27 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

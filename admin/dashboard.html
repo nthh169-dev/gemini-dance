@@ -29,7 +29,8 @@
       <div class="stat"><small>Tổng người đăng ký</small><b id="s-reg">–</b><span id="s-reg-sub"></span></div>
       <div class="stat"><small>Lượt truy cập</small><b id="s-views">–</b><span id="s-views-sub"></span></div>
       <div class="stat"><small>Đơn hàng</small><b id="s-orders">–</b><span id="s-orders-sub"></span></div>
-      <div class="stat"><small>Doanh thu (không tính đơn huỷ)</small><b id="s-rev">–</b><span id="s-rev-sub"></span></div>
+      <div class="stat"><small>Doanh thu học phí</small><b id="s-fee">–</b><span id="s-fee-sub"></span></div>
+      <div class="stat"><small>Doanh thu Shop</small><b id="s-rev">–</b><span id="s-rev-sub"></span></div>
     </div>
 
     <div class="chart-grid">
@@ -68,7 +69,7 @@
 
     const [regs, courses, views, orders, items] = await Promise.all([
       sb.from("registrations").select("id, code, full_name, phone, course_id, status, created_at").order("created_at", { ascending: false }),
-      sb.from("courses").select("id, name, level"),
+      sb.from("courses").select("id, name, level, fee"),
       sb.from("page_views").select("page, session_id, created_at").gte("created_at", since.toISOString()).limit(10000),
       sb.from("orders").select("id, total, status, created_at"),
       sb.from("order_items").select("product_name, qty, order_id")
@@ -79,14 +80,20 @@
     // Thẻ số liệu
     const active = R.filter((r) => r.status !== "cancelled");
     document.getElementById("s-reg").textContent = active.length;
-    document.getElementById("s-reg-sub").textContent = CO.map((c) => `${c.level === "beginner" ? "Beginner" : "Advanced"}: ${active.filter((r) => r.course_id === c.id).length}`).join(" · ");
+    const lvlOf = Object.fromEntries(CO.map((c) => [c.id, c.level]));
+    document.getElementById("s-reg-sub").textContent = ["beginner", "advanced"].map((l) => `${l === "beginner" ? "Beginner" : "Advanced"}: ${active.filter((r) => lvlOf[r.course_id] === l).length}`).join(" · ");
+    // Doanh thu học phí: chỉ cộng đăng ký "Đã xác nhận", tính theo học phí hiện tại của khoá
+    const feeOf = Object.fromEntries(CO.map((c) => [c.id, Number(c.fee) || 0]));
+    const confirmed = R.filter((r) => r.status === "confirmed"), pending = R.filter((r) => r.status === "pending");
+    document.getElementById("s-fee").textContent = vnd(confirmed.reduce((s, r) => s + (feeOf[r.course_id] || 0), 0));
+    document.getElementById("s-fee-sub").textContent = `${confirmed.length} đăng ký đã xác nhận · chưa tính ${vnd(pending.reduce((s, r) => s + (feeOf[r.course_id] || 0), 0))} chờ xác nhận`;
     document.getElementById("s-views").textContent = V.length.toLocaleString("vi-VN");
     document.getElementById("s-views-sub").textContent = `${new Set(V.map((v) => v.session_id)).size} phiên · ${days} ngày qua`;
     const okOrders = O.filter((o) => o.status !== "cancelled");
     document.getElementById("s-orders").textContent = O.length;
     document.getElementById("s-orders-sub").textContent = `${O.filter((o) => o.status === "new").length} đơn mới chờ xử lý`;
     document.getElementById("s-rev").textContent = vnd(okOrders.reduce((s, o) => s + o.total, 0));
-    document.getElementById("s-rev-sub").textContent = `${O.filter((o) => o.status === "done").length} đơn hoàn thành`;
+    document.getElementById("s-rev-sub").textContent = `Không tính đơn huỷ · ${O.filter((o) => o.status === "done").length} đơn hoàn thành`;
 
     // Biểu đồ theo ngày
     const labels = [], keys = [];
@@ -102,7 +109,7 @@
       data: CO.map((c) => active.filter((r) => r.course_id === c.id).length), backgroundColor: ["#8a7cf0", "#2f5da8", "#3ee6df", "#e8439a"], borderWidth: 0 }] },
       options: { maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } } });
 
-    const PAGE_NAME = { index: "Trang chủ", about: "Về chúng tôi", course: "Chi tiết khoá học", register: "Đăng ký", shop: "Shop", product: "Chi tiết SP", cart: "Giỏ hàng" };
+    const PAGE_NAME = { index: "Trang chủ", about: "Về chúng tôi", courses: "Khoá học", course: "Chi tiết khoá học", register: "Đăng ký", shop: "Shop", product: "Chi tiết SP", cart: "Giỏ hàng" };
     const pc = {}; V.forEach((v) => (pc[v.page] = (pc[v.page] || 0) + 1));
     const top = Object.entries(pc).sort((a, b) => b[1] - a[1]).slice(0, 7);
     draw("c-pages", { type: "bar", data: { labels: top.map(([k]) => PAGE_NAME[k] || k), datasets: [{ label: "Lượt xem", data: top.map(([, v]) => v), backgroundColor: "#8a7cf0", borderRadius: 6 }] },

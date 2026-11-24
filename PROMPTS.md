@@ -133,7 +133,15 @@
 
 ---
 
-## Prompt 13 – *(thêm tiếp ở đây)*
+## Prompt 13 – Chỉnh chiều cao ô Khoá học và placeholder Ghi chú (24/11/2026)
+**Prompt:**
+> Field khoá học cho chiều cao cao hơn 1 chút để cho tương xứng với field năm sinh. Place holder của phần ghi chú sửa lại là "Bạn đã từng học nhảy chưa? Muốn học thể loại nào"
+
+**Kết quả:** Mọi ô nhập và ô chọn dùng chung chiều cao 52px nên Khoá học thẳng hàng với Năm sinh (kể cả trên Safari, nhờ bỏ giao diện select mặc định và thêm mũi tên màu cyan). Placeholder Ghi chú đổi thành "Bạn đã từng học nhảy chưa? Muốn học thể loại nào?".
+
+---
+
+## Prompt 14 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

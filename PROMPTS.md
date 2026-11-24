@@ -238,7 +238,15 @@
 
 ---
 
-## Prompt 25 – *(thêm tiếp ở đây)*
+## Prompt 25 – Sửa form đăng ký: placeholder và tách ô Khoá học (24/11/2026)
+**Prompt:**
+> Chỗ form đăng ký lớp học này hãy sửa lại 3 chỗ: Placeholder ở chỗ Họ và tên hãy sửa lại là Nguyễn Thị A. Placeholder ở chỗ năm sinh hãy đổi lại thành 2008. Trường khoá học chữ bị khuất rồi cho nên khoá học hãy tách thành 2 field: field cấp độ và field thời gian
+
+**Kết quả:** Placeholder Họ và tên → "Nguyễn Thị A"; Năm sinh → "2008". Ô "Khoá học" tách thành **Cấp độ** (Beginner / Advanced, lấy từ các khoá đang mở) và **Lịch học** (ngày · giờ của các lớp thuộc cấp độ đã chọn, ô rộng hết dòng nên không bị khuất chữ). Đổi cấp độ thì danh sách lịch học đổi theo. Form sửa đăng ký ở tab "Tra cứu · Sửa · Huỷ" cũng dùng 2 ô này. Link `register.html?course=<id>` vẫn tự chọn đúng cấp độ và lịch.
+
+---
+
+## Prompt 26 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

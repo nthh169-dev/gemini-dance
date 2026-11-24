@@ -39,7 +39,7 @@
     if (!input || input.dataset.picker) return;
     input.dataset.picker = "1";
     input.type = "text"; input.inputMode = "numeric"; input.maxLength = 4; input.autocomplete = "bday-year";
-    if (!input.placeholder) input.placeholder = "VD: 2000";
+    if (!input.placeholder) input.placeholder = "2008";
     input.addEventListener("input", () => { input.value = input.value.replace(/\D/g, "").slice(0, 4); });
     const wrap = document.createElement("div"); wrap.className = "year-field";
     input.parentNode.insertBefore(wrap, input); wrap.appendChild(input);
@@ -95,7 +95,7 @@
       ["birth_year", (v) => {
         v = String(v || "").trim();
         if (!v) return "Vui lòng nhập hoặc chọn năm sinh.";
-        if (!/^\d{4}$/.test(v) || +v < 1950) return "Năm sinh không hợp lệ (nhập 4 số, VD: 2000).";
+        if (!/^\d{4}$/.test(v) || +v < 1950) return "Năm sinh không hợp lệ (nhập 4 số, VD: 2008).";
         if (+v > maxBirthYear()) return `Gemini Dance chỉ nhận học viên từ ${MIN_AGE} tuổi (sinh năm ${maxBirthYear()} trở về trước).`;
         return "";
       }]

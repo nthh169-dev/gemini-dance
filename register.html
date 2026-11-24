@@ -33,11 +33,12 @@
       <!-- TAB 1: INSERT -->
       <div class="form-card" id="tab-new">
         <form id="reg-form" class="form-grid" novalidate>
-          <div class="full"><label for="r-name">Họ và tên *</label><input id="r-name" name="full_name" required minlength="2" maxlength="80" placeholder="Nguyễn Thị Hạnh" autocomplete="name"></div>
+          <div class="full"><label for="r-name">Họ và tên *</label><input id="r-name" name="full_name" required minlength="2" maxlength="80" placeholder="Nguyễn Thị A" autocomplete="name"></div>
           <div><label for="r-phone">Số điện thoại *</label><input id="r-phone" name="phone" type="tel" inputmode="tel" required placeholder="0909 123 456" autocomplete="tel"></div>
           <div><label for="r-email">Email</label><input id="r-email" name="email" type="text" inputmode="email" placeholder="ban@gmail.com" autocomplete="email"></div>
           <div><label for="r-year">Năm sinh *</label><input id="r-year" name="birth_year" required><small class="field-hint" id="age-hint"></small></div>
-          <div><label for="r-course">Khoá học *</label><select id="r-course" name="course_id" required></select></div>
+          <div><label for="r-level">Cấp độ *</label><select id="r-level" name="level" required></select></div>
+          <div class="full"><label for="r-course">Lịch học *</label><select id="r-course" name="course_id" required></select></div>
           <div class="full"><label for="r-note">Ghi chú</label><textarea id="r-note" name="note" placeholder="Bạn đã từng học nhảy chưa? Muốn học thể loại nào?"></textarea></div>
           <div class="full"><button class="btn btn-primary" type="submit">Gửi đăng ký</button></div>
         </form>
@@ -64,8 +65,20 @@
 <script>
 (async function () {
   const courses = await getCourses();
-  const opts = (sel) => courses.map((c) => `<option value="${c.id}" ${String(c.id) === String(sel) ? "selected" : ""}>${esc(c.name)} · ${esc(c.schedule_days)} ${esc(c.schedule_time)}</option>`).join("");
-  document.getElementById("r-course").innerHTML = opts(qs("course"));
+  // Khoá học tách thành 2 ô: Cấp độ -> Lịch học (các lớp của cấp độ đó)
+  const LEVEL_NAME = { beginner: "Beginner", advanced: "Advanced" };
+  const levels = [...new Set(courses.map((c) => c.level))];
+  function bindCourseFields(levelSel, courseSel, selectedId) {
+    const cur = courses.find((c) => String(c.id) === String(selectedId)) || courses[0];
+    levelSel.innerHTML = levels.map((l) => `<option value="${l}" ${cur && cur.level === l ? "selected" : ""}>${esc(LEVEL_NAME[l] || l)}</option>`).join("");
+    const fill = (keepId) => {
+      const list = courses.filter((c) => c.level === levelSel.value);
+      courseSel.innerHTML = list.map((c) => `<option value="${c.id}" ${String(c.id) === String(keepId) ? "selected" : ""}>${esc(c.schedule_days)} · ${esc(c.schedule_time)}</option>`).join("");
+    };
+    fill(cur && cur.id);
+    levelSel.addEventListener("change", () => fill(null));
+  }
+  bindCourseFields(document.getElementById("r-level"), document.getElementById("r-course"), qs("course"));
 
   // Tabs
   document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => {
@@ -105,7 +118,7 @@
     btn.disabled = false;
     if (error) { toast("Đăng ký thất bại: " + errText(error), "err"); return; }
     const phone = normPhone(f.phone.value);
-    f.reset();
+    f.reset(); f.level.dispatchEvent(new Event("change"));
     document.getElementById("reg-result").innerHTML = `
       <div class="result-box">
         <p>🎉 Đăng ký thành công! Mã đăng ký của bạn:</p>
@@ -133,7 +146,8 @@
           <div class="full"><label>Họ và tên</label><input name="full_name" required value="${esc(data.full_name)}"></div>
           <div><label>Email</label><input name="email" type="text" inputmode="email" value="${esc(data.email || "")}"></div>
           <div><label>Năm sinh *</label><input name="birth_year" required value="${data.birth_year || ""}"></div>
-          <div class="full"><label>Khoá học</label><select name="course_id">${opts(data.course_id)}</select></div>
+          <div><label>Cấp độ</label><select name="level"></select></div>
+          <div><label>Lịch học</label><select name="course_id"></select></div>
           <div class="full"><label>Ghi chú</label><textarea name="note">${esc(data.note || "")}</textarea></div>
           <div class="full" style="display:flex;gap:12px;flex-wrap:wrap">
             <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
@@ -144,6 +158,7 @@
 
     // UPDATE
     attachYearPicker(document.getElementById("edit-form").elements.birth_year);
+    bindCourseFields(document.getElementById("edit-form").elements.level, document.getElementById("edit-form").elements.course_id, data.course_id);
     const validateEdit = attachContactValidation(document.getElementById("edit-form"));
     document.getElementById("edit-form").addEventListener("submit", async (ev) => {
       ev.preventDefault();

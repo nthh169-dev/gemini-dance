@@ -100,7 +100,20 @@
 
 ---
 
-## Prompt 10 – *(thêm tiếp ở đây)*
+## Prompt 10 – Sửa ô năm sinh ở trang Đăng ký (24/11/2026)
+**Prompt:**
+> https://nthh169-dev.github.io/gemini-dance/register.html — Màn hình trên chỗ năm sinh component sai. Ko có calendar để chọn ngoài ra có icon hình người hiển thị ko hợp lý
+
+**Kết quả:**
+- Đổi ô "Năm sinh" (ô số) thành **"Ngày sinh"** dùng `input type="date"` có lịch để chọn, giới hạn từ 1950 đến đủ 16 tuổi, giao diện lịch tối hợp màu web.
+- Ẩn icon danh bạ hình người mà Safari tự chèn vào ô nhập; thêm `autocomplete` đúng cho họ tên, SĐT, email, ngày sinh.
+- Database: thêm cột `birth_date` và cập nhật hàm RPC (`supabase/migration-002-birth-date.sql`). Trước khi chạy migration, web tự gửi năm sinh như cũ nên đăng ký vẫn hoạt động.
+- Trang admin Quản lý đăng ký hiển thị và sửa được ngày sinh.
+- Đã chạy thử SQL trên PostgreSQL và thử form bằng trình duyệt tự động (cả khi DB đã/ chưa chạy migration).
+
+---
+
+## Prompt 11 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

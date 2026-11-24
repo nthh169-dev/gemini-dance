@@ -33,10 +33,10 @@
       <!-- TAB 1: INSERT -->
       <div class="form-card" id="tab-new">
         <form id="reg-form" class="form-grid">
-          <div class="full"><label for="r-name">Họ và tên *</label><input id="r-name" name="full_name" required minlength="2" maxlength="80" placeholder="Nguyễn Thị Hạnh"></div>
-          <div><label for="r-phone">Số điện thoại *</label><input id="r-phone" name="phone" required pattern="[0-9+ ]{9,15}" placeholder="09xx xxx xxx"></div>
-          <div><label for="r-email">Email</label><input id="r-email" name="email" type="email" placeholder="ban@email.com"></div>
-          <div><label for="r-year">Năm sinh</label><input id="r-year" name="birth_year" type="number" min="1950" max="2008" placeholder="2002"></div>
+          <div class="full"><label for="r-name">Họ và tên *</label><input id="r-name" name="full_name" required minlength="2" maxlength="80" placeholder="Nguyễn Thị Hạnh" autocomplete="name"></div>
+          <div><label for="r-phone">Số điện thoại *</label><input id="r-phone" name="phone" type="tel" required pattern="[0-9+ ]{9,15}" placeholder="09xx xxx xxx" autocomplete="tel"></div>
+          <div><label for="r-email">Email</label><input id="r-email" name="email" type="email" placeholder="ban@email.com" autocomplete="email"></div>
+          <div><label for="r-dob">Ngày sinh</label><input id="r-dob" name="birth_date" type="date" min="1950-01-01" autocomplete="bday"></div>
           <div><label for="r-course">Khoá học *</label><select id="r-course" name="course_id" required></select></div>
           <div class="full"><label for="r-note">Ghi chú</label><textarea id="r-note" name="note" placeholder="Bạn đã từng học nhảy chưa? Muốn học dòng nhảy nào?"></textarea></div>
           <div class="full"><button class="btn btn-primary" type="submit">Gửi đăng ký</button></div>
@@ -75,7 +75,18 @@
   }));
 
   const needDb = () => { if (!sb) { toast("Chưa kết nối được database.", "err"); return true; } return false; };
-  const yearVal = (v) => (v ? Number(v) : null);
+  // Ngày sinh: chọn bằng lịch, giới hạn từ 1950 đến đủ 16 tuổi
+  const maxDob = (() => { const d = new Date(); d.setFullYear(d.getFullYear() - 16); return d.toISOString().slice(0, 10); })();
+  document.getElementById("r-dob").max = maxDob;
+  const dobVal = (v) => v || null;
+  // Gọi RPC với ngày sinh; nếu database chưa chạy migration-002 thì gửi năm sinh như bản cũ
+  async function rpcWithDob(fn, params, dob) {
+    let res = await sb.rpc(fn, { ...params, p_birth_date: dobVal(dob) });
+    if (res.error && (res.error.code === "PGRST202" || /p_birth_date/.test(res.error.message || ""))) {
+      res = await sb.rpc(fn, { ...params, p_birth_year: dob ? Number(dob.slice(0, 4)) : null });
+    }
+    return res;
+  }
 
   // INSERT
   document.getElementById("reg-form").addEventListener("submit", async (e) => {
@@ -83,10 +94,10 @@
     if (needDb()) return;
     const f = e.target, btn = f.querySelector("button");
     btn.disabled = true;
-    const { data, error } = await sb.rpc("register_course", {
+    const { data, error } = await rpcWithDob("register_course", {
       p_full_name: f.full_name.value, p_phone: f.phone.value, p_email: f.email.value,
-      p_birth_year: yearVal(f.birth_year.value), p_course_id: Number(f.course_id.value), p_note: f.note.value
-    });
+      p_course_id: Number(f.course_id.value), p_note: f.note.value
+    }, f.birth_date.value);
     btn.disabled = false;
     if (error) { toast("Đăng ký thất bại: " + error.message, "err"); return; }
     const phone = f.phone.value;
@@ -117,7 +128,7 @@
         <form id="edit-form" class="form-grid">
           <div class="full"><label>Họ và tên</label><input name="full_name" required value="${esc(data.full_name)}"></div>
           <div><label>Email</label><input name="email" type="email" value="${esc(data.email || "")}"></div>
-          <div><label>Năm sinh</label><input name="birth_year" type="number" min="1950" max="2008" value="${data.birth_year || ""}"></div>
+          <div><label>Ngày sinh</label><input name="birth_date" type="date" min="1950-01-01" max="${maxDob}" value="${esc(data.birth_date || "")}"></div>
           <div class="full"><label>Khoá học</label><select name="course_id">${opts(data.course_id)}</select></div>
           <div class="full"><label>Ghi chú</label><textarea name="note">${esc(data.note || "")}</textarea></div>
           <div class="full" style="display:flex;gap:12px;flex-wrap:wrap">
@@ -131,10 +142,10 @@
     document.getElementById("edit-form").addEventListener("submit", async (ev) => {
       ev.preventDefault();
       const f = ev.target;
-      const { data: ok, error } = await sb.rpc("update_registration", {
+      const { data: ok, error } = await rpcWithDob("update_registration", {
         p_code: current.code, p_phone: current.phone, p_full_name: f.full_name.value, p_email: f.email.value,
-        p_birth_year: yearVal(f.birth_year.value), p_course_id: Number(f.course_id.value), p_note: f.note.value
-      });
+        p_course_id: Number(f.course_id.value), p_note: f.note.value
+      }, f.birth_date.value);
       if (error || !ok) toast("Không cập nhật được: " + (error ? error.message : "không tìm thấy"), "err");
       else toast("Đã cập nhật đăng ký!");
     });

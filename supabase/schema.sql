@@ -39,6 +39,7 @@ create table if not exists public.registrations (
   phone      text not null check (phone ~ '^[0-9+ ]{9,15}$'),
   email      text,
   birth_year int  check (birth_year between 1950 and 2010),
+  birth_date date check (birth_date between '1950-01-01' and current_date),
   course_id  int  not null references public.courses(id) on delete cascade,
   note       text,
   status     text not null default 'pending' check (status in ('pending','confirmed','cancelled')),
@@ -105,6 +106,8 @@ $$;
 -- ---------------------------------------------------------------------
 -- 3. ROW LEVEL SECURITY
 -- ---------------------------------------------------------------------
+alter table public.registrations add column if not exists birth_date date;
+
 alter table public.admins        enable row level security;
 alter table public.courses       enable row level security;
 alter table public.registrations enable row level security;
@@ -151,17 +154,22 @@ grant usage, select on all sequences in schema public to authenticated;
 -- ---------------------------------------------------------------------
 -- 4. HÀM RPC CHO KHÁCH (chỉ thao tác được khi biết đúng mã + SĐT)
 -- ---------------------------------------------------------------------
+-- (xoá phiên bản cũ dùng birth_year nếu có)
+drop function if exists public.register_course(text, text, text, int, int, text);
+drop function if exists public.update_registration(text, text, text, text, int, int, text);
+
 -- 4.1 Đăng ký khoá học (INSERT)
 create or replace function public.register_course(
-  p_full_name text, p_phone text, p_email text, p_birth_year int, p_course_id int, p_note text)
+  p_full_name text, p_phone text, p_email text, p_birth_date date, p_course_id int, p_note text)
 returns json language plpgsql security definer set search_path = public as $$
 declare r public.registrations;
 begin
   if not exists (select 1 from courses where id = p_course_id and is_active) then
     raise exception 'Khoá học không tồn tại';
   end if;
-  insert into registrations(full_name, phone, email, birth_year, course_id, note)
-  values (trim(p_full_name), trim(p_phone), nullif(trim(p_email),''), p_birth_year, p_course_id, nullif(trim(p_note),''))
+  insert into registrations(full_name, phone, email, birth_date, birth_year, course_id, note)
+  values (trim(p_full_name), trim(p_phone), nullif(trim(p_email),''), p_birth_date,
+          extract(year from p_birth_date)::int, p_course_id, nullif(trim(p_note),''))
   returning * into r;
   return json_build_object('code', r.code, 'id', r.id);
 end $$;
@@ -170,7 +178,7 @@ end $$;
 create or replace function public.find_registration(p_code text, p_phone text)
 returns json language sql stable security definer set search_path = public as $$
   select row_to_json(x) from (
-    select r.code, r.full_name, r.phone, r.email, r.birth_year, r.course_id, r.note, r.status,
+    select r.code, r.full_name, r.phone, r.email, r.birth_year, r.birth_date, r.course_id, r.note, r.status,
            r.created_at, r.updated_at, c.name as course_name, c.schedule_days, c.schedule_time
     from registrations r join courses c on c.id = r.course_id
     where r.code = upper(trim(p_code)) and r.phone = trim(p_phone)
@@ -179,11 +187,12 @@ $$;
 
 -- 4.3 Sửa đăng ký (UPDATE)
 create or replace function public.update_registration(
-  p_code text, p_phone text, p_full_name text, p_email text, p_birth_year int, p_course_id int, p_note text)
+  p_code text, p_phone text, p_full_name text, p_email text, p_birth_date date, p_course_id int, p_note text)
 returns boolean language plpgsql security definer set search_path = public as $$
 begin
   update registrations set
-    full_name = trim(p_full_name), email = nullif(trim(p_email),''), birth_year = p_birth_year,
+    full_name = trim(p_full_name), email = nullif(trim(p_email),''),
+    birth_date = p_birth_date, birth_year = extract(year from p_birth_date)::int,
     course_id = p_course_id, note = nullif(trim(p_note),''), status = 'pending', updated_at = now()
   where code = upper(trim(p_code)) and phone = trim(p_phone);
   return found;

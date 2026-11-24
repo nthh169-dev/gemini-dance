@@ -141,6 +141,13 @@ label { display: block; font: 500 .9rem var(--font-head); margin-bottom: 6px; co
 input, select, textarea { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg-2); color: var(--text); font: inherit; }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(62,230,223,.18); }
 textarea { min-height: 90px; resize: vertical; }
+input, select, textarea { color-scheme: dark; } /* lịch, dropdown, icon của trình duyệt dùng giao diện tối */
+input[type="date"] { min-height: 48px; }
+input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: .85; filter: drop-shadow(0 0 4px rgba(62,230,223,.5)); }
+/* Ẩn icon danh bạ / mật khẩu tự động của Safari (icon hình người trong ô nhập) */
+input::-webkit-contacts-auto-fill-button, input::-webkit-credentials-auto-fill-button, input::-webkit-strong-password-auto-fill-button {
+  visibility: hidden; display: none !important; pointer-events: none; position: absolute; right: 0;
+}
 .tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap; }
 .result-box { margin-top: 22px; padding: 20px; border-radius: 14px; border: 1px dashed var(--violet); background: rgba(138,124,240,.08); }
 .code-big { font: 700 2rem var(--font-head); letter-spacing: .2em; }

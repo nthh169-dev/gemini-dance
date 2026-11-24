@@ -34,6 +34,7 @@
     <div class="full"><label>Họ tên</label><input name="full_name" required></div>
     <div><label>SĐT</label><input name="phone" required></div>
     <div><label>Email</label><input name="email" type="email"></div>
+    <div><label>Ngày sinh</label><input name="birth_date" type="date" min="1950-01-01"></div>
     <div><label>Khoá học</label><select name="course_id"></select></div>
     <div><label>Trạng thái</label><select name="status"></select></div>
     <div class="full"><label>Ghi chú</label><textarea name="note"></textarea></div>
@@ -67,9 +68,9 @@
     const q = document.getElementById("q").value.toLowerCase(), fc = document.getElementById("f-course").value, fs = document.getElementById("f-status").value;
     const list = rows.filter((r) => (!fc || String(r.course_id) === fc) && (!fs || r.status === fs) &&
       (!q || [r.full_name, r.phone, r.code, r.email].join(" ").toLowerCase().includes(q)));
-    document.getElementById("tbl").innerHTML = `<tr><th>Mã</th><th>Họ tên</th><th>SĐT</th><th>Email</th><th>Năm sinh</th><th>Khoá</th><th>Ghi chú</th><th>Trạng thái</th><th>Ngày ĐK</th><th></th></tr>` +
+    document.getElementById("tbl").innerHTML = `<tr><th>Mã</th><th>Họ tên</th><th>SĐT</th><th>Email</th><th>Ngày sinh</th><th>Khoá</th><th>Ghi chú</th><th>Trạng thái</th><th>Ngày ĐK</th><th></th></tr>` +
       (list.map((r) => `<tr>
-        <td><b>${esc(r.code)}</b></td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(r.email || "")}</td><td>${r.birth_year || ""}</td>
+        <td><b>${esc(r.code)}</b></td><td>${esc(r.full_name)}</td><td>${esc(r.phone)}</td><td>${esc(r.email || "")}</td><td>${r.birth_date ? new Date(r.birth_date + "T00:00").toLocaleDateString("vi-VN") : (r.birth_year || "")}</td>
         <td>${esc(cname[r.course_id] || "")}</td><td class="wrap">${esc(r.note || "")}</td>
         <td>${statusSelect(STATUS_REG, r.status, `data-status="${r.id}"`)}</td><td>${fmtDate(r.created_at)}</td>
         <td class="row-actions"><button class="btn btn-ghost btn-sm" data-edit="${r.id}">Sửa</button><button class="btn btn-danger btn-sm" data-del="${r.id}">Xoá</button></td>
@@ -96,6 +97,8 @@
       const r = rows.find((x) => x.id == e.target.dataset.edit);
       form.dataset.id = r.id; document.getElementById("dlg-code").textContent = r.code;
       ["full_name", "phone", "email", "note", "course_id", "status"].forEach((k) => (form[k].value = r[k] ?? ""));
+      form.birth_date.value = r.birth_date || "";
+      form.birth_date.closest("div").hidden = !("birth_date" in r); // ẩn nếu DB chưa chạy migration-002
       dlg.returnValue = ""; dlg.showModal();
     }
   });
@@ -103,6 +106,9 @@
   dlg.addEventListener("close", async () => {
     if (dlg.returnValue !== "save") return;
     const v = Object.fromEntries(new FormData(form));
+    const r0 = rows.find((x) => x.id == form.dataset.id);
+    if ("birth_date" in r0) { v.birth_date = v.birth_date || null; v.birth_year = v.birth_date ? Number(v.birth_date.slice(0, 4)) : null; }
+    else delete v.birth_date;
     const { error } = await sb.from("registrations").update({ ...v, course_id: Number(v.course_id), email: v.email || null, note: v.note || null, updated_at: new Date().toISOString() }).eq("id", form.dataset.id);
     if (error) toast(error.message, "err"); else { toast("Đã lưu"); load(); }
   });

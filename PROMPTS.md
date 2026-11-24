@@ -181,7 +181,20 @@
 
 ---
 
-## Prompt 19 – *(thêm tiếp ở đây)*
+## Prompt 19 – Tách trang Khoá học, gọn Trang chủ và footer (24/11/2026)
+**Prompt:**
+> 1. Phần lịch học hiển thị ở cuối màn hình home sẽ không còn đúng nữa nếu admin thêm khoá học mới hoặc thay đổi nội dung nên bạn hãy xoá phần lịch học ở đây đi
+> 2. Phần "Chọn lớp phù hợp với bạn" nếu hiển thị ở đây, khi admin add thêm nhiều lớp sẽ tràn lan và làm dài trang web ra nên hãy bỏ phần này ra khỏi trang chủ
+> Thêm vào đó khi nhấn nút "xem lịch học" ở dưới chữ Gemini Dance ở đầu trang, hãy điều hướng qua Trang khoá học
+
+**Kết quả:**
+- Footer: bỏ cột "Lịch học" viết cứng; link "Khoá Beginner / Khoá Advanced" gộp thành "Khoá học & lịch học".
+- Trang chủ: bỏ phần "Chọn lớp phù hợp với bạn"; nút "Xem lịch học" chuyển sang trang mới `courses.html`.
+- Trang mới `courses.html`: liệt kê mọi khoá đang hiển thị lấy từ database, có nút lọc Tất cả / Beginner / Advanced. Menu "Khoá học", nút ở trang Giới thiệu và nút "Về danh sách khoá học" ở trang chi tiết đều trỏ về trang này.
+
+---
+
+## Prompt 20 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

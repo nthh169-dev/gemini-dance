@@ -82,7 +82,7 @@
 
   document.getElementById("other-course").innerHTML = courses.filter((x) => x.id !== c.id)
     .map((x) => `<a class="btn btn-ghost" href="course.html?slug=${encodeURIComponent(x.slug)}">${esc(x.name)}</a>`).join("")
-    + `<a class="btn btn-ghost" href="index.html#khoa-hoc">Về danh sách khoá học</a>`;
+    + `<a class="btn btn-ghost" href="courses.html">Về danh sách khoá học</a>`;
 })();
 </script>
 </body>

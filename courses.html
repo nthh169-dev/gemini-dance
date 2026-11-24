@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<title>Khoá học – Gemini Dance</title>
+<meta name="description" content="Tất cả khoá học nhảy tại Gemini Dance: lịch học, học phí, sĩ số. Lọc theo cấp độ Beginner / Advanced.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div id="site-header"></div>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Khoá học</span>
+      <h1>Chọn lớp <span class="grad-text">phù hợp</span> với bạn</h1>
+      <p>Lịch học, học phí và sĩ số luôn được cập nhật theo các lớp đang mở tuyển.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px">
+    <div class="container">
+      <div class="chips" id="lvl-chips" style="justify-content:center;margin-bottom:28px"></div>
+      <div class="course-grid" id="course-list"><p class="empty">Đang tải khoá học…</p></div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(async function () {
+  const courses = await getCourses();
+  const LEVELS = [["", "Tất cả"], ["beginner", "Beginner"], ["advanced", "Advanced"]];
+  let level = qs("level") || "";
+  const chips = document.getElementById("lvl-chips"), list = document.getElementById("course-list");
+  function render() {
+    chips.innerHTML = LEVELS.map(([v, t]) => `<button class="chip ${v === level ? "active" : ""}" data-level="${v}">${t}</button>`).join("");
+    const rows = courses.filter((c) => !level || c.level === level);
+    list.innerHTML = rows.length ? rows.map((c) => `
+    <article class="course-card">
+      <div class="schedule-pill">
+        <div class="lvl lvl-${c.level}">${c.level.toUpperCase()}</div>
+        <div class="time"><small>${esc(c.schedule_days)}</small><b>${esc(c.schedule_time)}</b></div>
+      </div>
+      <h3>${esc(c.name)}</h3>
+      <p class="muted">${esc(c.short_desc)}</p>
+      <div class="meta"><span>⏱ ${c.duration_weeks} tuần</span><span>👥 Tối đa ${c.max_students} học viên</span><span>💳 ${vnd(c.fee)}</span></div>
+      <div class="actions">
+        <a class="btn btn-primary btn-sm" href="register.html?course=${c.id}">Đăng ký</a>
+        <a class="btn btn-ghost btn-sm" href="course.html?slug=${encodeURIComponent(c.slug)}">Xem chi tiết</a>
+      </div>
+    </article>`).join("") : `<p class="empty">Hiện chưa có lớp nào ở cấp độ này.</p>`;
+  }
+  chips.addEventListener("click", (e) => { const b = e.target.closest("[data-level]"); if (b) { level = b.dataset.level; render(); } });
+  render();
+})();
+</script>
+</body>
+</html>

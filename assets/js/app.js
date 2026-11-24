@@ -227,7 +227,7 @@
   const NAV = [
     ["index.html", "Trang chủ", ["index"]],
     ["about.html", "Về chúng tôi", ["about"]],
-    ["index.html#khoa-hoc", "Khoá học", ["course"]],
+    ["courses.html", "Khoá học", ["courses", "course"]],
     ["register.html", "Đăng ký", ["register"]],
     ["shop.html", "Gemini Shop", ["shop", "product"]]
   ];
@@ -283,15 +283,9 @@
             <h4>Khám phá</h4>
             <a href="${ROOT}index.html">Trang chủ</a>
             <a href="${ROOT}about.html">Về chúng tôi</a>
-            <a href="${ROOT}course.html?slug=beginner">Khoá Beginner</a>
-            <a href="${ROOT}course.html?slug=advanced">Khoá Advanced</a>
+            <a href="${ROOT}courses.html">Khoá học &amp; lịch học</a>
             <a href="${ROOT}register.html">Đăng ký / Tra cứu</a>
             <a href="${ROOT}shop.html">Gemini Shop</a>
-          </div>
-          <div>
-            <h4>Lịch học</h4>
-            <p><span class="tag tag-beginner">BEGINNER</span><br>Chủ nhật · 12:00 – 14:00</p>
-            <p><span class="tag tag-advanced">ADVANCED</span><br>T7 &amp; Chủ nhật · 14:00 – 15:00</p>
           </div>
           <div>
             <h4>Liên hệ</h4>

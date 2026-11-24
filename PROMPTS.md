@@ -141,7 +141,15 @@
 
 ---
 
-## Prompt 14 – *(thêm tiếp ở đây)*
+## Prompt 14 – Bỏ lịch học trong thẻ liên hệ (24/11/2026)
+**Prompt:**
+> Bỏ 2 dòng beginer và advance ở đây đi *(kèm ảnh thẻ "Gemini Dance Studio" ở Trang chủ)*
+
+**Kết quả:** Xoá 2 dòng lịch Beginner / Advanced trong thẻ "Gemini Dance Studio" ở phần Liên hệ của Trang chủ; thẻ chỉ còn địa chỉ và các mạng xã hội.
+
+---
+
+## Prompt 15 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

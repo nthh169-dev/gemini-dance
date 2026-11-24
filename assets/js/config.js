@@ -11,7 +11,8 @@ window.GD_CONFIG = {
     facebook: "https://www.facebook.com/gemini.dance169",
     youtube: "https://www.youtube.com/@GeminiDance"
   },
-  // Kênh YouTube UCQp4joF80RtFzKP0IyKDX7g -> playlist "Uploads" = "UU" + phần sau "UC"
-  YOUTUBE_EMBED: "https://www.youtube.com/embed/videoseries?list=UUQp4joF80RtFzKP0IyKDX7g",
+  // Nhúng 1 video cụ thể (dạng playlist "videoseries" bị lỗi "This video is unavailable" trên Android).
+  // Muốn đổi video: thay mã sau /embed/ bằng mã video mới (phần sau "watch?v=").
+  YOUTUBE_EMBED: "https://www.youtube.com/embed/MbON2SK5HSQ?rel=0",
   MAP_EMBED: "https://maps.google.com/maps?q=188%2F5%2F1%20Nguy%E1%BB%85n%20Su%C3%BD%2C%20T%C3%A2n%20Ph%C3%BA%2C%20H%E1%BB%93%20Ch%C3%AD%20Minh&z=16&output=embed"
 };

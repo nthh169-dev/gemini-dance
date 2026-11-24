@@ -173,7 +173,15 @@
 
 ---
 
-## Prompt 18 – *(thêm tiếp ở đây)*
+## Prompt 18 – Sửa video YouTube "unavailable" trên Android (24/11/2026)
+**Prompt:**
+> Phần hiển thị video youtube trên trang home, tại sao trên android lại hien this video is unavailabel *(kèm ảnh chụp trên Android)*
+
+**Kết quả:** Nguyên nhân: video đang nhúng dạng playlist "Uploads" của kênh (`embed/videoseries?list=UU…`). Trình phát YouTube trên điện thoại (nhất là Android) thường không mở được kiểu playlist này nên báo "This video is unavailable", dù trên máy tính vẫn chạy. Đã đổi sang nhúng trực tiếp video mới nhất của kênh (`embed/MbON2SK5HSQ`) trong `assets/js/config.js`, kèm ghi chú cách đổi sang video khác.
+
+---
+
+## Prompt 19 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

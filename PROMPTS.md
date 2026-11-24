@@ -295,7 +295,7 @@
 **Prompt:**
 > mình muốn build dự án này lên cloudflare thì mình điền gì vô đây (ảnh form "Create an app" của Cloudflare Workers)
 
-**Kết quả:** Thêm `wrangler.jsonc` (phục vụ cả thư mục gốc như website tĩnh, không cần build) và `.assetsignore` (không đưa lên các file `.md`, `supabase/`, `image/`). Trên form Cloudflare: Project name `gemini-dance`, Build command để trống, Deploy command `npx wrangler deploy`, Preview command `npx wrangler versions upload`. GitHub Pages vẫn chạy song song.
+**Kết quả:** Thêm `wrangler.jsonc` (phục vụ cả thư mục gốc như website tĩnh, không cần build) và `.assetsignore` (không đưa lên các file `.md`, `supabase/`, `image/`). Trên form Cloudflare: Project name `gemini-dance`, Build command để trống, Deploy command `npx wrangler deploy`, Preview command giữ mặc định `npx wrangler preview`. GitHub Pages vẫn chạy song song.
 
 ---
 

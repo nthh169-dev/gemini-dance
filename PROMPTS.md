@@ -230,7 +230,15 @@
 
 ---
 
-## Prompt 24 – *(thêm tiếp ở đây)*
+## Prompt 24 – Sửa badge Đơn hàng không hiện (24/11/2026)
+**Prompt:**
+> Mình mua sản phẩm nhưng ko thấy badge hiển thị ở đơn hàng *(kèm ảnh Dashboard)*
+
+**Kết quả:** Nguyên nhân: ở lần đầu mở admin trên một trình duyệt, code coi mọi record đã có là "đã xem", nên đơn đặt trước lần mở đó bị bỏ qua. Sửa lại: khi chưa có mốc "đã xem", badge đếm các record **chưa xử lý** (đăng ký "Chờ xác nhận", đơn "Mới"). Từ lần mở trang Đăng ký / Đơn hàng trở đi mới tính theo thời điểm. Đổi tên khoá lưu trong trình duyệt để mọi máy admin tính lại theo cách mới.
+
+---
+
+## Prompt 25 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

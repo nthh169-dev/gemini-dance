@@ -38,23 +38,27 @@ function renderSide(email) {
 // ---------- Badge "mới" trên menu Đăng ký / Đơn hàng ----------
 // Ghi nhớ (trong trình duyệt của admin) thời điểm record mới nhất đã xem.
 // Badge = số record có created_at sau mốc đó. Mở trang tương ứng => badge mất.
+// Lần đầu (chưa có mốc): đếm các record chưa xử lý (đăng ký "pending", đơn "new").
 const NEW_BADGE = { registrations: "registrations", orders: "orders" };
+const UNHANDLED = { registrations: "pending", orders: "new" };
 async function latestCreated(table) {
   const { data } = await sb.from(table).select("created_at").order("created_at", { ascending: false }).limit(1);
   return data && data[0] ? data[0].created_at : new Date(0).toISOString();
 }
 async function initNewBadges(email, page) {
-  const key = (k) => `gd_seen_${k}_${email}`;
+  const key = (k) => `gd_seen2_${k}_${email}`;
   const get = (k) => { try { return localStorage.getItem(key(k)); } catch { return null; } };
   const set = (k, v) => { try { localStorage.setItem(key(k), v); } catch {} };
   async function refresh() {
     for (const k of Object.keys(NEW_BADGE)) {
       const el = document.getElementById("badge-" + k);
       if (!el) continue;
-      let seen = get(k);
-      // Đang mở trang này, hoặc lần đầu dùng: coi như đã xem hết
-      if (k === page || !seen) { set(k, await latestCreated(NEW_BADGE[k])); el.hidden = true; continue; }
-      const { count } = await sb.from(NEW_BADGE[k]).select("id", { count: "exact", head: true }).gt("created_at", seen);
+      const seen = get(k);
+      // Đang mở trang này: coi như đã xem hết
+      if (k === page) { set(k, await latestCreated(NEW_BADGE[k])); el.hidden = true; continue; }
+      let q = sb.from(NEW_BADGE[k]).select("id", { count: "exact", head: true });
+      q = seen ? q.gt("created_at", seen) : q.eq("status", UNHANDLED[k]);
+      const { count } = await q;
       el.textContent = count > 99 ? "99+" : count;
       el.hidden = !count;
     }

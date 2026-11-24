@@ -92,7 +92,15 @@
 
 ---
 
-## Prompt 9 – *(thêm tiếp ở đây)*
+## Prompt 9 – Sửa lỗi "Quên mật khẩu" luôn báo đợi 1 phút (24/11/2026)
+**Prompt:**
+> Phần quên mật khẩu không work. Khi nhập mail và bấm nút "gửi link đặt lại mật khẩu" thì lúc nào cũng ra message "bạn vừa yêu cầu rồi. Vui lòng đợi khoảng 1 phút rồi thử lại"
+
+**Kết quả:** Nguyên nhân: email miễn phí của Supabase chỉ gửi được vài thư mỗi giờ cho cả project. Khi vượt giới hạn, Supabase trả lỗi *email rate limit exceeded*, nhưng code cũ gộp mọi lỗi có chữ "rate" thành thông báo "đợi 1 phút" nên hiểu sai. Claude sửa `admin/forgot-password.html` để phân biệt giới hạn theo giờ và giới hạn 1 phút, hiện đúng lỗi khác, ghi lỗi vào console. Thêm file `supabase/reset-admin-password.sql` để đặt mật khẩu admin trực tiếp bằng SQL khi không gửi được email.
+
+---
+
+## Prompt 10 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

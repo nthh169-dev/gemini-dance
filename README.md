@@ -45,6 +45,7 @@ HTML · CSS · JavaScript thuần · [Supabase](https://supabase.com) (PostgreSQ
 ### Quên mật khẩu admin
 Vào `admin/login.html` → **Quên mật khẩu?** → nhập email admin → mở thư *Reset Your Password* → link đưa về `admin/reset-password.html` để đặt mật khẩu mới. Admin đang đăng nhập cũng đổi được mật khẩu qua mục **🔑 Đổi mật khẩu** ở sidebar.
 > Email mặc định của Supabase chỉ gửi được vài thư mỗi giờ và chỉ tới email thành viên của project. Nếu không nhận được thư: Supabase → Authentication → Users → bấm vào user → *Send password recovery*, hoặc xoá user rồi tạo lại.
+> Nếu báo **"Supabase đã gửi quá số email cho phép trong 1 giờ"**: đợi khoảng 1 giờ, hoặc đặt mật khẩu mới trực tiếp bằng SQL: mở `supabase/reset-admin-password.sql`, sửa email + mật khẩu mới, dán vào SQL Editor rồi Run.
 
 URL và *publishable key* đã có trong `assets/js/config.js` (key này được phép công khai; dữ liệu được bảo vệ bằng RLS).
 

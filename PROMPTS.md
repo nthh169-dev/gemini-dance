@@ -267,7 +267,15 @@
 
 ---
 
-## Prompt 28 – *(thêm tiếp ở đây)*
+## Prompt 28 – Bỏ nút "Tham gia lớp học" ở phần Câu chuyện Song Tử (24/11/2026)
+**Prompt:**
+> Bỏ nút Tham gia lớp học ở dưới câu chuyện song tử đi, vì ở phía trên đã có nút rồi
+
+**Kết quả:** Xoá nút "Tham gia lớp học" trong phần "Về chúng tôi / Câu chuyện Song Tử" ở Trang chủ; banner phía trên vẫn có nút "Đăng ký học ngay".
+
+---
+
+## Prompt 29 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

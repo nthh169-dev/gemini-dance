@@ -210,7 +210,19 @@
 
 ---
 
-## Prompt 22 – *(thêm tiếp ở đây)*
+## Prompt 22 – Gắn ảnh thật cho sản phẩm theo từng màu (24/11/2026)
+**Prompt:**
+> Mình có upload một số hình dành cho sản phẩm trong folder shop, tên sản phẩm ứng với sản phẩm trong shop mà màu tương ứng với màu từng sản phẩm. Bạn hãy update hình ảnh vào đúng tên sản phẩm và tên màu giúp mình
+
+**Kết quả:**
+- 12 ảnh PNG (~7MB/ảnh) trong `Shop/` được nén thành JPG 900×1200 (~60–130KB) tại `assets/img/products/<tên-sản-phẩm>-<màu>.jpg`, tên file viết không dấu (VD: `sneaker-gemini-den-hong.jpg`).
+- `image_url` của sản phẩm hỗ trợ ký hiệu `{mau}`, VD `assets/img/products/sport-bra-{mau}.jpg`: trang Shop hiện ảnh màu đầu tiên; trang chi tiết đổi ảnh khi bấm chọn màu; giỏ hàng hiện ảnh đúng màu đã chọn. Màu nào chưa có ảnh sẽ dùng ảnh của màu đầu tiên.
+- `supabase/migration-004-product-images.sql`: gắn ảnh cho 6 sản phẩm (Bodysuit Gemini, Áo lưới bling bling, Quần short dance, Quần short bling bling, Sport bra, Sneaker Gemini). Dữ liệu mẫu trong `schema.sql` và `app.js` cũng đổi theo tên/màu mới.
+- Form admin Sản phẩm có hướng dẫn cách dùng `{mau}`.
+
+---
+
+## Prompt 23 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

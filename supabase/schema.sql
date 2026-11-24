@@ -311,20 +311,28 @@ on conflict (slug) do nothing;
 
 insert into public.products (name, category, price, sale_price, sizes, colors, badge, stock, description)
 select * from (values
- ('Bodysuit Gemini Neon',  'trang-phuc', 420000, null::int, array['S','M','L'],       array['Đen','Tím neon'],   'New',  30, 'Bodysuit cut-out ôm dáng, thun lạnh 4 chiều co giãn, tôn đường cong khi biểu diễn.'),
- ('Crop top lưới Starry',  'trang-phuc', 220000, 179000,    array['S','M','L'],       array['Đen','Trắng'],      'Sale', 40, 'Crop top lưới phối dây, mặc ngoài sport bra cực cá tính.'),
- ('Quần biker Twin',       'trang-phuc', 260000, null,      array['S','M','L','XL'],  array['Đen','Hồng'],       'Hot',  35, 'Quần biker cạp cao, không lộ khi xoạc, thấm hút mồ hôi.'),
- ('Legging ánh kim Galaxy','trang-phuc', 350000, null,      array['S','M','L'],       array['Bạc','Tím'],        'New',  20, 'Legging phủ ánh kim lấp lánh dưới đèn sân khấu.'),
- ('Sport bra Constellation','trang-phuc',240000, null,      array['S','M','L'],       array['Đen','Cyan'],       null,   30, 'Sport bra nâng đỡ tốt, dây đan chéo lưng.'),
+ ('Bodysuit Gemini',  'trang-phuc', 420000, null::int, array['S','M','L'],       array['Đen','Tím'],   'New',  30, 'Bodysuit cut-out ôm dáng, thun lạnh 4 chiều co giãn, tôn đường cong khi biểu diễn.'),
+ ('Áo lưới bling bling',  'trang-phuc', 220000, 179000,    array['S','M','L'],       array['Đen','Nâu'],      'Sale', 40, 'Crop top lưới phối dây, mặc ngoài sport bra cực cá tính.'),
+ ('Quần short dance',       'trang-phuc', 260000, null,      array['S','M','L','XL'],  array['Đen','Đỏ'],       'Hot',  35, 'Quần biker cạp cao, không lộ khi xoạc, thấm hút mồ hôi.'),
+ ('Quần short bling bling','trang-phuc', 350000, null,      array['S','M','L'],       array['Bạc','Đỏ'],        'New',  20, 'Legging phủ ánh kim lấp lánh dưới đèn sân khấu.'),
+ ('Sport bra','trang-phuc',240000, null,      array['S','M','L'],       array['Đen','Hồng'],       null,   30, 'Sport bra nâng đỡ tốt, dây đan chéo lưng.'),
  ('Giày Heels Dance 9cm',  'giay',       890000, 790000,    array['35','36','37','38','39'], array['Đen','Nude'], 'Sale', 15, 'Giày heels đế da lộn chuyên nhảy, gót vững, có quai cổ chân.'),
  ('Giày Jazz da mềm',      'giay',       450000, null,      array['35','36','37','38','39'], array['Đen','Be'],   null,   20, 'Giày jazz đế chia đôi, xoay trượt dễ dàng.'),
- ('Sneaker nhảy Gemini',   'giay',       990000, null,      array['36','37','38','39'],      array['Trắng','Đen'],'Hot',  18, 'Sneaker đế xoay pivot, nhẹ, êm cho hip hop & K-pop.'),
+ ('Sneaker Gemini',   'giay',       990000, null,      array['36','37','38','39'],      array['Trắng','Đen Hồng'],'Hot',  18, 'Sneaker đế xoay pivot, nhẹ, êm cho hip hop & K-pop.'),
  ('Tất đùi Thigh-high',    'phu-kien',   120000, null,      array['Free size'],      array['Đen'],              'Hot',  60, 'Tất đùi dày dặn, chống trượt, chuẩn outfit Sexy Dance.'),
  ('Găng tay lưới Neon',    'phu-kien',    90000, null,      array['Free size'],      array['Đen','Hồng'],       null,   50, 'Găng tay lưới hở ngón, điểm nhấn cho tiết mục.'),
  ('Kneepad bảo vệ gối',    'phu-kien',   180000, null,      array['S','M'],          array['Đen'],              'New',  40, 'Bảo vệ gối khi tập floor work, mỏng nhẹ mặc dưới legging.'),
  ('Túi tập Gemini Duffle', 'phu-kien',   390000, 329000,    array['Free size'],      array['Đen','Tím'],        'Sale', 25, 'Túi trống có ngăn giày riêng, in logo Gemini Dance phản quang.')
 ) as v(name, category, price, sale_price, sizes, colors, badge, stock, description)
 where not exists (select 1 from public.products);
+
+-- Ảnh thật theo màu ({mau} -> tên màu không dấu), xem migration-004-product-images.sql
+update public.products set image_url = 'assets/img/products/bodysuit-gemini-{mau}.jpg'        where name = 'Bodysuit Gemini';
+update public.products set image_url = 'assets/img/products/ao-luoi-bling-bling-{mau}.jpg'    where name = 'Áo lưới bling bling';
+update public.products set image_url = 'assets/img/products/quan-short-dance-{mau}.jpg'       where name = 'Quần short dance';
+update public.products set image_url = 'assets/img/products/quan-short-bling-bling-{mau}.jpg' where name = 'Quần short bling bling';
+update public.products set image_url = 'assets/img/products/sport-bra-{mau}.jpg'              where name = 'Sport bra';
+update public.products set image_url = 'assets/img/products/sneaker-gemini-{mau}.jpg'         where name = 'Sneaker Gemini';
 
 -- ---------------------------------------------------------------------
 -- 6. TẠO ADMIN (chạy SAU khi đã tạo user trong Authentication > Users)

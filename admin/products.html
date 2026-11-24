@@ -39,7 +39,7 @@
     <div><label>Màu (cách nhau dấu phẩy)</label><input name="colors" placeholder="Đen, Hồng"></div>
     <div><label>Tồn kho</label><input name="stock" type="number" min="0" required></div>
     <div><label>Hiển thị</label><select name="is_active"><option value="true">Có</option><option value="false">Ẩn</option></select></div>
-    <div class="full"><label>Link ảnh (tuỳ chọn, VD: assets/img/products/bodysuit.jpg)</label><input name="image_url"></div>
+    <div class="full"><label>Link ảnh (tuỳ chọn). Mỗi màu một ảnh: dùng {mau}, VD: assets/img/products/sport-bra-{mau}.jpg → sport-bra-den.jpg, sport-bra-hong.jpg</label><input name="image_url"></div>
     <div class="full"><label>Mô tả</label><textarea name="description"></textarea></div>
     <div class="full" style="display:flex;gap:10px"><button class="btn btn-primary" value="save">Lưu</button><button class="btn btn-ghost" value="cancel" formnovalidate>Đóng</button></div>
   </form>

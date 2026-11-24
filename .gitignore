@@ -5,3 +5,6 @@ supabase.txt
 
 # macOS
 .DS_Store
+
+# Ảnh gốc sản phẩm (PNG rất nặng) – bản web đã nén nằm trong assets/img/products/
+Shop/

@@ -74,7 +74,7 @@
     } else {
       box.innerHTML = items.map((i, idx) => `
         <div class="cart-item">
-          <div class="thumb">${productImage(byId[i.product_id] || { id: i.product_id, name: i.name, category: "phu-kien" })}</div>
+          <div class="thumb">${productImage(byId[i.product_id] || { id: i.product_id, name: i.name, category: "phu-kien" }, "", i.color)}</div>
           <div>
             <a href="product.html?id=${i.product_id}"><b>${esc(i.name)}</b></a>
             <div class="muted" style="font-size:.88rem">${esc(i.size)} · ${esc(i.color)} · ${vnd(i.price)}</div>

@@ -126,6 +126,8 @@
   };
 
   // ---------- Dữ liệu mẫu (khi chưa kết nối được Supabase) ----------
+  // Ảnh sản phẩm cho dữ liệu mẫu: id -> tên file (assets/img/products/<tên>-<màu>.jpg)
+  const PRODUCT_IMG = { 1: "bodysuit-gemini", 2: "ao-luoi-bling-bling", 3: "quan-short-dance", 4: "quan-short-bling-bling", 5: "sport-bra", 8: "sneaker-gemini" };
   window.FALLBACK = {
     courses: [
       { id: 1, slug: "beginner", name: "Beginner – Lớp Căn Bản", level: "beginner", schedule_days: "Chủ nhật", schedule_time: "12:00 – 14:00", duration_weeks: 8, fee: 1200000, max_students: 20,
@@ -138,20 +140,20 @@
         highlights: ["Kỹ thuật Heels & floor work", "Choreography tốc độ cao, chuyển đội hình", "Freestyle & tạo dấu ấn cá nhân", "Dựng bài biểu diễn nhóm", "Ưu tiên tham gia show & MV của trung tâm"] }
     ],
     products: [
-      [1, "Bodysuit Gemini Neon", "trang-phuc", 420000, null, ["S","M","L"], ["Đen","Tím neon"], "New", 30, "Bodysuit cut-out ôm dáng, thun lạnh 4 chiều co giãn, tôn đường cong khi biểu diễn."],
-      [2, "Crop top lưới Starry", "trang-phuc", 220000, 179000, ["S","M","L"], ["Đen","Trắng"], "Sale", 40, "Crop top lưới phối dây, mặc ngoài sport bra cực cá tính."],
-      [3, "Quần biker Twin", "trang-phuc", 260000, null, ["S","M","L","XL"], ["Đen","Hồng"], "Hot", 35, "Quần biker cạp cao, không lộ khi xoạc, thấm hút mồ hôi."],
-      [4, "Legging ánh kim Galaxy", "trang-phuc", 350000, null, ["S","M","L"], ["Bạc","Tím"], "New", 20, "Legging phủ ánh kim lấp lánh dưới đèn sân khấu."],
-      [5, "Sport bra Constellation", "trang-phuc", 240000, null, ["S","M","L"], ["Đen","Cyan"], null, 30, "Sport bra nâng đỡ tốt, dây đan chéo lưng."],
+      [1, "Bodysuit Gemini", "trang-phuc", 420000, null, ["S","M","L"], ["Đen","Tím"], "New", 30, "Bodysuit cut-out ôm dáng, thun lạnh 4 chiều co giãn, tôn đường cong khi biểu diễn."],
+      [2, "Áo lưới bling bling", "trang-phuc", 220000, 179000, ["S","M","L"], ["Đen","Nâu"], "Sale", 40, "Crop top lưới phối dây, mặc ngoài sport bra cực cá tính."],
+      [3, "Quần short dance", "trang-phuc", 260000, null, ["S","M","L","XL"], ["Đen","Đỏ"], "Hot", 35, "Quần biker cạp cao, không lộ khi xoạc, thấm hút mồ hôi."],
+      [4, "Quần short bling bling", "trang-phuc", 350000, null, ["S","M","L"], ["Bạc","Đỏ"], "New", 20, "Legging phủ ánh kim lấp lánh dưới đèn sân khấu."],
+      [5, "Sport bra", "trang-phuc", 240000, null, ["S","M","L"], ["Đen","Hồng"], null, 30, "Sport bra nâng đỡ tốt, dây đan chéo lưng."],
       [6, "Giày Heels Dance 9cm", "giay", 890000, 790000, ["35","36","37","38","39"], ["Đen","Nude"], "Sale", 15, "Giày heels đế da lộn chuyên nhảy, gót vững, có quai cổ chân."],
       [7, "Giày Jazz da mềm", "giay", 450000, null, ["35","36","37","38","39"], ["Đen","Be"], null, 20, "Giày jazz đế chia đôi, xoay trượt dễ dàng."],
-      [8, "Sneaker nhảy Gemini", "giay", 990000, null, ["36","37","38","39"], ["Trắng","Đen"], "Hot", 18, "Sneaker đế xoay pivot, nhẹ, êm cho hip hop & K-pop."],
+      [8, "Sneaker Gemini", "giay", 990000, null, ["36","37","38","39"], ["Trắng","Đen Hồng"], "Hot", 18, "Sneaker đế xoay pivot, nhẹ, êm cho hip hop & K-pop."],
       [9, "Tất đùi Thigh-high", "phu-kien", 120000, null, ["Free size"], ["Đen"], "Hot", 60, "Tất đùi dày dặn, chống trượt, chuẩn outfit Sexy Dance."],
       [10, "Găng tay lưới Neon", "phu-kien", 90000, null, ["Free size"], ["Đen","Hồng"], null, 50, "Găng tay lưới hở ngón, điểm nhấn cho tiết mục."],
       [11, "Kneepad bảo vệ gối", "phu-kien", 180000, null, ["S","M"], ["Đen"], "New", 40, "Bảo vệ gối khi tập floor work, mỏng nhẹ mặc dưới legging."],
       [12, "Túi tập Gemini Duffle", "phu-kien", 390000, 329000, ["Free size"], ["Đen","Tím"], "Sale", 25, "Túi trống có ngăn giày riêng, in logo Gemini Dance phản quang."]
     ].map(([id, name, category, price, sale_price, sizes, colors, badge, stock, description]) =>
-      ({ id, name, category, price, sale_price, sizes, colors, badge, stock, description, image_url: null, is_active: true }))
+      ({ id, name, category, price, sale_price, sizes, colors, badge, stock, description, image_url: PRODUCT_IMG[id] ? `assets/img/products/${PRODUCT_IMG[id]}-{mau}.jpg` : null, is_active: true }))
   };
 
   window.CATEGORY = { "trang-phuc": "Trang phục", "giay": "Giày nhảy", "phu-kien": "Phụ kiện" };
@@ -181,8 +183,22 @@
     "phu-kien": '<rect x="44" y="64" width="112" height="70" rx="16"/><path d="M76 64v-10c0-8 6-14 14-14h20c8 0 14 6 14 14v10" fill="none" stroke-width="10"/>'
   };
   const TINT = { "Đen": "#1b1830", "Trắng": "#3a3654", "Hồng": "#5a1f45", "Tím": "#3b2a6e", "Tím neon": "#3b2a6e", "Cyan": "#164a52", "Bạc": "#3c3f52", "Nude": "#4f3a35", "Be": "#4a4236" };
-  window.productImage = function (p, cls = "") {
-    if (p.image_url) return `<img class="${cls}" src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy">`;
+  // "Đen Hồng" -> "den-hong" (dùng cho tên file ảnh theo màu)
+  window.slugify = (s) => String(s || "").replace(/đ/g, "d").replace(/Đ/g, "D").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  // image_url có thể chứa {mau}: assets/img/products/sport-bra-{mau}.jpg -> mỗi màu một ảnh (sport-bra-den.jpg, sport-bra-hong.jpg)
+  window.productImageUrl = function (p, color) {
+    if (!p.image_url) return "";
+    const c = color || (p.colors || [])[0] || "";
+    return p.image_url.replace(/\{mau\}/g, slugify(c));
+  };
+  window.productImage = function (p, cls = "", color = "") {
+    if (p.image_url) {
+      const src = productImageUrl(p, color), first = productImageUrl(p, "");
+      const alt = p.name + (color ? " – màu " + color : "");
+      // Nếu màu này chưa có ảnh thì dùng ảnh của màu đầu tiên
+      return `<img class="${cls}" src="${esc(src)}" alt="${esc(alt)}" loading="lazy" onerror="this.onerror=null;this.src='${esc(first)}'">`;
+    }
     const tint = TINT[(p.colors || [])[0]] || "#2a2550";
     const id = "g" + p.id + Math.random().toString(36).slice(2, 6);
     return `<svg class="${cls}" viewBox="0 0 200 250" role="img" aria-label="${esc(p.name)}">

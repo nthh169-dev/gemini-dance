@@ -127,7 +127,8 @@
 
   // ---------- Dữ liệu mẫu (khi chưa kết nối được Supabase) ----------
   // Ảnh sản phẩm cho dữ liệu mẫu: id -> tên file (assets/img/products/<tên>-<màu>.jpg)
-  const PRODUCT_IMG = { 1: "bodysuit-gemini", 2: "ao-luoi-bling-bling", 3: "quan-short-dance", 4: "quan-short-bling-bling", 5: "sport-bra", 8: "sneaker-gemini" };
+  const PRODUCT_IMG = { 1: "bodysuit-gemini-{mau}", 2: "ao-luoi-bling-bling-{mau}", 3: "quan-short-dance-{mau}", 4: "quan-short-bling-bling-{mau}", 5: "sport-bra-{mau}",
+    6: "giay-heels-dance-9cm", 7: "giay-jazz-da-mem", 8: "sneaker-gemini-{mau}", 9: "tat-dui-thigh-high", 10: "gang-tay-luoi-bling-bling", 11: "kneepad-bao-ve-goi", 12: "tui-tap-gemini-duffle" };
   window.FALLBACK = {
     courses: [
       { id: 1, slug: "beginner", name: "Beginner – Lớp Căn Bản", level: "beginner", schedule_days: "Chủ nhật", schedule_time: "12:00 – 14:00", duration_weeks: 8, fee: 1200000, max_students: 20,
@@ -149,11 +150,11 @@
       [7, "Giày Jazz da mềm", "giay", 450000, null, ["35","36","37","38","39"], ["Đen","Be"], null, 20, "Giày jazz đế chia đôi, xoay trượt dễ dàng."],
       [8, "Sneaker Gemini", "giay", 990000, null, ["36","37","38","39"], ["Trắng","Đen Hồng"], "Hot", 18, "Sneaker đế xoay pivot, nhẹ, êm cho hip hop & K-pop."],
       [9, "Tất đùi Thigh-high", "phu-kien", 120000, null, ["Free size"], ["Đen"], "Hot", 60, "Tất đùi dày dặn, chống trượt, chuẩn outfit Sexy Dance."],
-      [10, "Găng tay lưới Neon", "phu-kien", 90000, null, ["Free size"], ["Đen","Hồng"], null, 50, "Găng tay lưới hở ngón, điểm nhấn cho tiết mục."],
+      [10, "Găng tay lưới bling bling", "phu-kien", 90000, null, ["Free size"], ["Đen","Hồng"], null, 50, "Găng tay lưới hở ngón, điểm nhấn cho tiết mục."],
       [11, "Kneepad bảo vệ gối", "phu-kien", 180000, null, ["S","M"], ["Đen"], "New", 40, "Bảo vệ gối khi tập floor work, mỏng nhẹ mặc dưới legging."],
       [12, "Túi tập Gemini Duffle", "phu-kien", 390000, 329000, ["Free size"], ["Đen","Tím"], "Sale", 25, "Túi trống có ngăn giày riêng, in logo Gemini Dance phản quang."]
     ].map(([id, name, category, price, sale_price, sizes, colors, badge, stock, description]) =>
-      ({ id, name, category, price, sale_price, sizes, colors, badge, stock, description, image_url: PRODUCT_IMG[id] ? `assets/img/products/${PRODUCT_IMG[id]}-{mau}.jpg` : null, is_active: true }))
+      ({ id, name, category, price, sale_price, sizes, colors, badge, stock, description, image_url: PRODUCT_IMG[id] ? `assets/img/products/${PRODUCT_IMG[id]}.jpg` : null, is_active: true }))
   };
 
   window.CATEGORY = { "trang-phuc": "Trang phục", "giay": "Giày nhảy", "phu-kien": "Phụ kiện" };

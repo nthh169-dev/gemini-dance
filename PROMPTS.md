@@ -299,7 +299,15 @@
 
 ---
 
-## Prompt 32 – *(thêm tiếp ở đây)*
+## Prompt 32 – Ảnh cho 6 sản phẩm còn lại (24/11/2026)
+**Prompt:**
+> Mình đã thêm hình sản phẩm vào folder shop rồi, bạn hãy đưa lên web giúp mình với tên hiển thị tương ứng tên hình
+
+**Kết quả:** 6 ảnh mới (Giày Heels Dance 9cm, Giày Jazz da mềm, Tất đùi Thigh-high, Găng tay lưới bling bling, Kneepad bảo vệ gối, Túi tập Gemini Duffle) được nén thành JPG 900×1200 trong `assets/img/products/`. Các ảnh này không ghi màu trong tên file nên mỗi sản phẩm dùng 1 ảnh cho mọi màu. `supabase/migration-006-more-product-images.sql` gắn ảnh vào đúng sản phẩm theo tên; dữ liệu mẫu (`schema.sql`, `app.js`) cập nhật tên "Găng tay lưới bling bling" và đủ ảnh cho cả 12 sản phẩm.
+
+---
+
+## Prompt 33 – *(thêm tiếp ở đây)*
 **Prompt:**
 > …
 

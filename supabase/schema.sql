@@ -320,7 +320,7 @@ select * from (values
  ('Giày Jazz da mềm',      'giay',       450000, null,      array['35','36','37','38','39'], array['Đen','Be'],   null,   20, 'Giày jazz đế chia đôi, xoay trượt dễ dàng.'),
  ('Sneaker Gemini',   'giay',       990000, null,      array['36','37','38','39'],      array['Trắng','Đen Hồng'],'Hot',  18, 'Sneaker đế xoay pivot, nhẹ, êm cho hip hop & K-pop.'),
  ('Tất đùi Thigh-high',    'phu-kien',   120000, null,      array['Free size'],      array['Đen'],              'Hot',  60, 'Tất đùi dày dặn, chống trượt, chuẩn outfit Sexy Dance.'),
- ('Găng tay lưới Neon',    'phu-kien',    90000, null,      array['Free size'],      array['Đen','Hồng'],       null,   50, 'Găng tay lưới hở ngón, điểm nhấn cho tiết mục.'),
+ ('Găng tay lưới bling bling',    'phu-kien',    90000, null,      array['Free size'],      array['Đen','Hồng'],       null,   50, 'Găng tay lưới hở ngón, điểm nhấn cho tiết mục.'),
  ('Kneepad bảo vệ gối',    'phu-kien',   180000, null,      array['S','M'],          array['Đen'],              'New',  40, 'Bảo vệ gối khi tập floor work, mỏng nhẹ mặc dưới legging.'),
  ('Túi tập Gemini Duffle', 'phu-kien',   390000, 329000,    array['Free size'],      array['Đen','Tím'],        'Sale', 25, 'Túi trống có ngăn giày riêng, in logo Gemini Dance phản quang.')
 ) as v(name, category, price, sale_price, sizes, colors, badge, stock, description)
@@ -333,6 +333,12 @@ update public.products set image_url = 'assets/img/products/quan-short-dance-{ma
 update public.products set image_url = 'assets/img/products/quan-short-bling-bling-{mau}.jpg' where name = 'Quần short bling bling';
 update public.products set image_url = 'assets/img/products/sport-bra-{mau}.jpg'              where name = 'Sport bra';
 update public.products set image_url = 'assets/img/products/sneaker-gemini-{mau}.jpg'         where name = 'Sneaker Gemini';
+update public.products set image_url = 'assets/img/products/giay-heels-dance-9cm.jpg'      where name = 'Giày Heels Dance 9cm';
+update public.products set image_url = 'assets/img/products/giay-jazz-da-mem.jpg'          where name = 'Giày Jazz da mềm';
+update public.products set image_url = 'assets/img/products/tat-dui-thigh-high.jpg'        where name = 'Tất đùi Thigh-high';
+update public.products set image_url = 'assets/img/products/gang-tay-luoi-bling-bling.jpg' where name = 'Găng tay lưới bling bling';
+update public.products set image_url = 'assets/img/products/kneepad-bao-ve-goi.jpg'        where name = 'Kneepad bảo vệ gối';
+update public.products set image_url = 'assets/img/products/tui-tap-gemini-duffle.jpg'     where name = 'Túi tập Gemini Duffle';
 
 -- ---------------------------------------------------------------------
 -- 6. TẠO ADMIN (chạy SAU khi đã tạo user trong Authentication > Users)
